@@ -8,8 +8,6 @@ using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Data.Repositories;
-using TimeKeeper.Service.Dto;
-using TimeKeeper.Service.Helpers;
 using TimeKeeper.Service.Services;
 using TimeKeeper.Ui.Data;
 

@@ -8,9 +8,10 @@ namespace TimeKeeper.Ui
     {
         public MapperProfiles()
         {
-                CreateMap<WorkMonth, WorkMonthDto>();
-                CreateMap<Deviation, DeviationDto>();
-                CreateMap<DeviationType, DeviationTypeDto>();
+            CreateMap<WorkMonth, WorkMonthDto>();
+            CreateMap<Deviation, DeviationDto>();
+            CreateMap<DeviationDto, Deviation>();
+            CreateMap<DeviationType, DeviationTypeDto>();
         }
     }
 }

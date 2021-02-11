@@ -11,6 +11,8 @@ namespace TimeKeeper.Data.Models
         public string StopTime { get; set; }
         public string Comment { get; set; }
         public bool IsPredefined { get; set; }
+        public int DeviationTypeId { get; set; }
         public DeviationType DeviationType { get; set; }
+        public int WorkMonthId { get; set; }
     }
 }

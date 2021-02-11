@@ -12,4 +12,8 @@
     <ProjectReference Include="..\TimeKeeper.Data\TimeKeeper.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>

@@ -9,19 +9,34 @@ namespace TimeKeeper.Data.Repositories
 {
     public interface IWorkMonthRepo
     {
+        void AddDeviationAsync(Deviation deviation);
         Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
-
+        Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
     }
 
     public class WorkMonthRepo : IWorkMonthRepo
     {
         private readonly TimeKeeperDbContext _context;
+        private readonly DbContextOptions<TimeKeeperDbContext> _options;
 
-        public WorkMonthRepo(TimeKeeperDbContext context)
+        public WorkMonthRepo(TimeKeeperDbContext context, DbContextOptions<TimeKeeperDbContext> options)
         {
             _context = context;
+            _options = options;
         }
 
+
+        public async void AddDeviationAsync(Deviation deviation)
+        {
+            using (var _context2 = new TimeKeeperDbContext(_options))
+            {
+
+            
+                var result = await _context2.AddAsync(deviation);
+            //_context.Add(deviation);
+            await _context2.SaveChangesAsync();
+            }
+        }
 
         public async Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year)
         {
@@ -30,7 +45,14 @@ namespace TimeKeeper.Data.Repositories
             return workMonth;
         }
 
+        public async Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync()
+        {
+            var result = await _context.DeviationTypes.Where(x => x != null).ToListAsync();
 
-        
+            return result;
+        }
+
+
+
     }
 }

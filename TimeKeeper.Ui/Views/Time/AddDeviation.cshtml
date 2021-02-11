@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model TimeKeeper.Service.Dto.DeviationDto;
+
+<h1>Create new categories</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Add" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DeviationTypeId" class="control-label">Deviation</label>
+                <select asp-for="DeviationTypeId" class="form-control" asp-items="ViewBag.Deviations">
+                    <option value="">Please Select</option>
+                </select>
+                <span asp-validation-for="DeviationTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label">From</label>
+                <input asp-for="StartTime" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StopTime" class="control-label">To</label>
+                <input asp-for="StopTime" class="form-control" />
+                <span asp-validation-for="StopTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn-sm btn-primary" /> |
+                <a class="btn-sm btn-success" asp-action="Index">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
