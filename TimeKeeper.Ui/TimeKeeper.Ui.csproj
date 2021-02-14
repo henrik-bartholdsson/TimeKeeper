@@ -19,8 +19,4 @@
     <ProjectReference Include="..\TimeKeeper.Service\TimeKeeper.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels_\" />
-  </ItemGroup>
-
 </Project>

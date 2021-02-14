@@ -12,6 +12,7 @@ namespace TimeKeeper.Data.Repositories
         void AddDeviationAsync(Deviation deviation);
         Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
+        Task<WorkMonth> GetWorkMonthById(int Id);
     }
 
     public class WorkMonthRepo : IWorkMonthRepo
@@ -25,15 +26,20 @@ namespace TimeKeeper.Data.Repositories
             _options = options;
         }
 
+        public async Task<WorkMonth> GetWorkMonthById(int Id)
+        {
+            var month = await _context.WorkMonths.FirstOrDefaultAsync(x => x.Id == Id);
+
+            return month;
+        }
+
 
         public async void AddDeviationAsync(Deviation deviation)
         {
             using (var _context2 = new TimeKeeperDbContext(_options))
             {
-
-            
                 var result = await _context2.AddAsync(deviation);
-            //_context.Add(deviation);
+
             await _context2.SaveChangesAsync();
             }
         }

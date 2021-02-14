@@ -28,15 +28,16 @@ namespace TimeKeeper.Service.Services
         }
 
 
-        public void AddDeviation(DeviationDto deviation)
+        public void AddDeviation(DeviationDto inputDeviation)
         {
-            if (deviation == null)
+            if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
-            var result = _mapper.Map<Deviation>(deviation);
+            var result = _mapper.Map<Deviation>(inputDeviation);
 
             _wmRepo.AddDeviationAsync(result);
         }
+
 
         public IEnumerable<DeviationTypeDto> GetAllDeviationTypes()
         {
@@ -53,12 +54,13 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
+
         public WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year)
         {
-            var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, month, year).Result; // Kolla om null
+            var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, month, year).Result;
 
-            if(workMonth == null)
-                throw new Exception("Month not found");
+            if (workMonth == null)
+                return null;
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
 
@@ -66,6 +68,8 @@ namespace TimeKeeper.Service.Services
 
             return result;
         }
+
+
 
 
 
@@ -81,6 +85,25 @@ namespace TimeKeeper.Service.Services
 
 
         #region Private methods
+
+        private bool ValidateInputDeviationInput(DeviationDto inputDeviation)
+        {
+            var requestedMonth = _wmRepo.GetWorkMonthById(inputDeviation.WorkMonthId).Result;
+
+            if (requestedMonth.IsApproved)
+                throw new Exception("Cannot add deviations to allready approved months.");
+
+            if (requestedMonth.IsSubmitted)
+                throw new Exception("Cannot add deviations to allready submitted months. Recall the month and try again.");
+
+            if (inputDeviation.userId != requestedMonth.UserId)
+                throw new Exception("Unauthorized.");
+
+
+
+            return true;
+        }
+
 
         private static WorkMonthDto SetWeekDaysToDeviations(WorkMonthDto workMonth)
         {

@@ -3,10 +3,10 @@
 *@
 @model TimeKeeper.Service.Dto.WorkMonthDto
 
-@ViewData["Year"]
+@DateTime.Parse(@ViewData["DateShown"].ToString()).Year
 
 <div><a asp-action="Index" asp-route-changeMonth="-1" asp-route-currentShownDate=@ViewData["DateShown"]><</a> @Model.NormalizedMonthName <a asp-action="Index" asp-route-changeMonth="1" asp-route-currentShownDate=@ViewData["DateShown"]>></a></div>
-<a class="btn-sm btn-primary" asp-action="Add" asp-controller="Time">New Deviation</a>
+<a class="btn-sm btn-primary" asp-action="Add" asp-controller="Time" asp-route-currentShownDate=@ViewData["DateShown"] asp-route-monthId=@Model.Id>New Deviation</a>
 <hr />
 @foreach (var d in Model.Deviations)
 {
