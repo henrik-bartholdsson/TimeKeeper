@@ -33,6 +33,7 @@ namespace TimeKeeper.Service.Services
             if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
+
             var result = _mapper.Map<Deviation>(inputDeviation);
 
             _wmRepo.AddDeviationAsync(result);
@@ -55,6 +56,7 @@ namespace TimeKeeper.Service.Services
         }
 
 
+
         public WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year)
         {
             var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, month, year).Result;
@@ -71,8 +73,6 @@ namespace TimeKeeper.Service.Services
 
 
 
-
-
         public void AddNewMonths()
         {
             // Add new months for all users that have the specified month Submitted.
@@ -84,11 +84,17 @@ namespace TimeKeeper.Service.Services
 
 
 
+
+
+
         #region Private methods
+
+
+
 
         private bool ValidateInputDeviationInput(DeviationDto inputDeviation)
         {
-            var requestedMonth = _wmRepo.GetWorkMonthById(inputDeviation.WorkMonthId).Result;
+            var requestedMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
 
             if (requestedMonth.IsApproved)
                 throw new Exception("Cannot add deviations to allready approved months.");

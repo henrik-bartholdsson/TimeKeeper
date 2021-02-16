@@ -39,7 +39,6 @@ namespace TimeKeeper.Ui
 
             services.AddScoped<IWorkMonthRepo, WorkMonthRepo>();
             services.AddScoped<ITimeKeeperService, TimeKeeperService>();
-            // services.AddScoped<IMapperService, MapperService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
