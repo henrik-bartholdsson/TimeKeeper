@@ -12,6 +12,7 @@ namespace TimeKeeper.Service.Services
         void AddDeviation(DeviationDto deviation);
         WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year);
         IEnumerable<DeviationTypeDto> GetAllDeviationTypes();
+        IEnumerable<Invitation> GetInvitations(string userId);
     }
 
 
@@ -25,6 +26,20 @@ namespace TimeKeeper.Service.Services
         {
             _wmRepo = wmRepo;
             _mapper = mapper;
+        }
+
+
+        public IEnumerable<Invitation> GetInvitations(string userId)
+        {
+            var invitations = _wmRepo.GetInvitationsAsync(userId).Result;
+            
+            foreach(var i in invitations)
+            {
+                var inviterName = _wmRepo.GetOrganisationASync(i.OrganisationId).Result;
+                i.OrganisationName = inviterName.Name;
+            }
+
+            return invitations;
         }
 
 

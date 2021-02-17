@@ -32,6 +32,7 @@ namespace TimeKeeper.Ui.Controllers
 
                 requestedDate = DateTime.Parse(currentShownDate).AddMonths(changeMonth);
 
+
             // Default ska vara att hämta den älsta månaden som inte är submitted
             // Finns ingen månad för användaren, vad händer då?
 

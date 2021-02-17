@@ -20,7 +20,11 @@ namespace TimeKeeper.Ui.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var invitations = _service.GetInvitations("Hej");
+
+
+
+            return View(invitations);
         }
 
         public IActionResult Privacy()

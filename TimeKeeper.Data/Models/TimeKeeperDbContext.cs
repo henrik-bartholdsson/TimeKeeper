@@ -18,5 +18,6 @@ namespace TimeKeeper.Ui.Data
         public DbSet<Deviation> Deviations { get; set; }
         public DbSet<DeviationType> DeviationTypes { get; set; }
         public DbSet<Organisation> Organisation { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
     }
 }

@@ -13,6 +13,8 @@ namespace TimeKeeper.Data.Repositories
         Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
+        Task<IEnumerable<Invitation>> GetInvitationsAsync(string userID);
+        Task<Organisation> GetOrganisationASync(int id);
     }
 
     public class WorkMonthRepo : IWorkMonthRepo
@@ -22,6 +24,30 @@ namespace TimeKeeper.Data.Repositories
         public WorkMonthRepo(TimeKeeperDbContext context, DbContextOptions<TimeKeeperDbContext> options)
         {
             _options = options;
+        }
+
+
+        public async Task<Organisation> GetOrganisationASync(int id) // Maybe include this function in GetInvitationsAsync(string userId) instead ?????? need to redo the db in that case.
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+
+                Organisation organisation = await context.Organisation.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                return organisation;
+            }
+        }
+
+
+        public async Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId)
+        {
+            using( var context = new TimeKeeperDbContext(_options))
+            {
+
+                List<Invitation> invitations = await context.Invitations.Where(x => x.UserId == userId).ToListAsync();
+
+                return invitations;
+            }
         }
 
         public async Task<WorkMonth> GetWorkMonthByIdAsync(int Id)
