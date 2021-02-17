@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TimeKeeper.Data.Models;
 
 namespace TimeKeeper.Ui.Data
 {
-    public class TimeKeeperDbContext : IdentityDbContext
+    public class TimeKeeperDbContext : IdentityDbContext<ApplicationUser>
     {
         public TimeKeeperDbContext(DbContextOptions<TimeKeeperDbContext> options)
             : base(options)
@@ -19,5 +16,7 @@ namespace TimeKeeper.Ui.Data
         public DbSet<DeviationType> DeviationTypes { get; set; }
         public DbSet<Organisation> Organisation { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
+
+        public DbSet<ApplicationUser> AspNetUsers { get; set; }
     }
 }

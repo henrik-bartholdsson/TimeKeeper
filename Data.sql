@@ -33,3 +33,9 @@ insert into Invitations ([UserId],[Header],[Message],[OrganisationId])
 select * from WorkMonths
 
 select * from Deviations
+
+select * from Invitations
+
+update invitations
+set UserId = 'xxxxxxxxxx'
+where UserId = 'xxxxxxxxxxxx'

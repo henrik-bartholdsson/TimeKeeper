@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using TimeKeeper.Data.Models;
 using TimeKeeper.Service.Dto;
 using TimeKeeper.Service.Services;
 using TimeKeeper.Ui.Models;
@@ -12,14 +14,17 @@ using TimeKeeper.Ui.ViewModels;
 
 namespace TimeKeeper.Ui.Controllers
 {
+    [Authorize]
     public class TimeController : Controller
     {
         private readonly ITimeKeeperService _service;
+        private readonly UserManager<ApplicationUser> _userManager;
         private string userId = "Hej";
 
-        public TimeController(ITimeKeeperService service)
+        public TimeController(ITimeKeeperService service, UserManager<ApplicationUser> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
 
 

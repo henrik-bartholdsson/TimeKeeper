@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
+using TimeKeeper.Data.Models;
 using TimeKeeper.Service.Services;
 using TimeKeeper.Ui.Models;
 
@@ -11,16 +14,20 @@ namespace TimeKeeper.Ui.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ITimeKeeperService _service;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ITimeKeeperService service)
+        public HomeController(ILogger<HomeController> logger, ITimeKeeperService service, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _service = service;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
-            var invitations = _service.GetInvitations("Hej");
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var invitations = _service.GetInvitations(userName);
 
 
 
