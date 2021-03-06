@@ -19,12 +19,14 @@ namespace TimeKeeper.Service.Services
 
     public class TimeKeeperService : ITimeKeeperService
     {
+        private readonly IOrganisationRepo _organisationRepo;
         private readonly IWorkMonthRepo _wmRepo;
         private readonly IMapper _mapper;
 
-        public TimeKeeperService(IWorkMonthRepo wmRepo, IMapper mapper)
+        public TimeKeeperService(IWorkMonthRepo wmRepo, IOrganisationRepo organisationRepo, IMapper mapper)
         {
             _wmRepo = wmRepo;
+            _organisationRepo = organisationRepo;
             _mapper = mapper;
         }
 

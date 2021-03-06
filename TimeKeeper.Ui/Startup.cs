@@ -38,6 +38,7 @@ namespace TimeKeeper.Ui
             
 
             services.AddScoped<IWorkMonthRepo, WorkMonthRepo>();
+            services.AddScoped<IOrganisationRepo, OrganisationRepo>();
             services.AddScoped<ITimeKeeperService, TimeKeeperService>();
         }
 
