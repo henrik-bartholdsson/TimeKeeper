@@ -29,70 +29,46 @@ namespace TimeKeeper.Ui.Controllers
 
 
         [HttpGet]
-        public IActionResult Index(string currentShownDate, int changeMonth)
+        public IActionResult Index(string year, string month, int changeMonth)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             DateTime requestedDate;
-            //if (String.IsNullOrEmpty(currentShownDate))
-            //    currentShownDate = DateTime.Now.ToString();
-
-            if (String.IsNullOrEmpty(currentShownDate))
-            {
-                try
-                {
-                    var workMonth = _service.GetLastWorkMonthByUserId(userId);
-                    requestedDate = DateTime.Parse($"{workMonth.Year}-{workMonth.Month}-01");
-
-                    ViewData["DateShown"] = requestedDate;
-                    return View(workMonth);
-                }
-                catch(Exception ex)
-                {
-                    ViewData["ErrorMessage"] = ex.Message;
-                    ViewData["Prompt"] = "Please contact your manager....";
-                    return View("ErrorPage");
-                }
-            }
-
-            requestedDate = DateTime.Parse(currentShownDate).AddMonths(changeMonth);
-
-            // Default ska vara att hämta den älsta månaden som inte är submitted
-            // Finns ingen månad för användaren, vad händer då?
+            WorkMonthDto workMonth;
 
             try
             {
-                var workMonth = _service.GetWorkMonthByUserId(userId, requestedDate.Month, requestedDate.Year);
+                if (String.IsNullOrEmpty(year) || String.IsNullOrEmpty(month))
+                {
+                    workMonth = _service.GetLastWorkMonthByUserId(userId);
+                    return View(workMonth);
+                }
+
+                requestedDate = DateTime.Parse($"{year}/{month}/01").AddMonths(changeMonth);
+                workMonth = _service.GetWorkMonthByUserId(userId, requestedDate);
 
                 if (workMonth == null)
                 {
-                    requestedDate = DateTime.Parse(currentShownDate);
-                    workMonth = _service.GetWorkMonthByUserId(userId, requestedDate.Month, requestedDate.Year);
+                    requestedDate = DateTime.Parse($"{year}/{month}/01");
+                    workMonth = _service.GetWorkMonthByUserId(userId, requestedDate);
                 }
-
-                if (workMonth == null)
-                    throw new Exception(@"Requested month could not be found.");
-
-                requestedDate = DateTime.Parse($"{workMonth.Year}-{workMonth.Month}-01");
-
-                ViewData["DateShown"] = requestedDate;
 
                 return View(workMonth);
             }
             catch (Exception ex)
             {
                 ViewData["ErrorMessage"] = ex.Message;
-                ViewData["Prompt"] = "Please contact your manager.";
+                ViewData["Prompt"] = "Please contact your manager....";
                 return View("ErrorPage");
             }
         }
 
 
         [HttpGet]
-        public IActionResult Add(string currentShownDate, int monthId)
+        public IActionResult Add(string year, string month, int monthId)
         {
             var addDeviationViewModel = new AddDeviationViewModel() { Deviation = new DeviationDto() };
 
-            addDeviationViewModel.Deviation.RequestedDate = DateTime.Parse(currentShownDate);
+            addDeviationViewModel.Deviation.RequestedDate = DateTime.Parse($"{year}/{month}/01");
             var deviationTypes = _service.GetAllDeviationTypes();
 
             addDeviationViewModel.SelectDaysInMonth = GetAllDaysInMonthAndYear(addDeviationViewModel.Deviation.RequestedDate.Year, addDeviationViewModel.Deviation.RequestedDate.Month);

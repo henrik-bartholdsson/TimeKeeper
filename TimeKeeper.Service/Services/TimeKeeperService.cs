@@ -10,7 +10,7 @@ namespace TimeKeeper.Service.Services
     public interface ITimeKeeperService
     {
         void AddDeviation(DeviationDto deviation);
-        WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year);
+        WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate);
         WorkMonthDto GetLastWorkMonthByUserId(string userId);
         IEnumerable<DeviationTypeDto> GetAllDeviationTypes();
         IEnumerable<Invitation> GetInvitations(string userId);
@@ -84,10 +84,9 @@ namespace TimeKeeper.Service.Services
 
 
 
-        public WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year)
+        public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
         {
-            var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, month, year).Result;
-
+            var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
 
             if (workMonth == null)
                 return null;

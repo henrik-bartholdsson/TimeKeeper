@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -76,38 +77,53 @@ namespace TimeKeeper.Data.Repositories
 
         public async Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year)
         {
-            WorkMonth workMonth;
+            List<WorkMonth> workMonths;
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonth = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(y => y.Deviations).ThenInclude(z => z.DeviationType).FirstOrDefaultAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(y => y.Deviations).ThenInclude(z => z.DeviationType).ToListAsync();
             }
+
+            if (workMonths.Count < 1)
+                throw new Exception("No month found");
+
+            var workMonth = workMonths.FirstOrDefault();
 
             return workMonth;
         }
 
         public async Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId)
         {
-            WorkMonth workMonth;
+            List<WorkMonth> workMonths;
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonth = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).LastAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
             }
 
-            return workMonth;
+            if (workMonths.Count < 1)
+                throw new Exception("No month found");
+
+            var month = workMonths.OrderBy(y => y.Id).Last();
+
+            return month;
         }
 
         public async Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId)
         {
-            WorkMonth workMonth;
+            List<WorkMonth> workMonths;
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonth = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).LastAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
             }
 
-            return workMonth;
+            if (workMonths.Count < 1)
+                throw new Exception("No month found");
+
+            var month = workMonths.OrderBy(y => y.Id).Last();
+
+            return month;
         }
 
         public async Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync()
