@@ -11,6 +11,8 @@ namespace TimeKeeper.Data.Repositories
     {
         void AddDeviationAsync(Deviation deviation);
         Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
+        Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId);
+        Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
         Task<IEnumerable<Invitation>> GetInvitationsAsync(string userID);
@@ -79,6 +81,30 @@ namespace TimeKeeper.Data.Repositories
             using (var _context = new TimeKeeperDbContext(_options))
             {
                 workMonth = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(y => y.Deviations).ThenInclude(z => z.DeviationType).FirstOrDefaultAsync();
+            }
+
+            return workMonth;
+        }
+
+        public async Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId)
+        {
+            WorkMonth workMonth;
+
+            using (var _context = new TimeKeeperDbContext(_options))
+            {
+                workMonth = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).LastAsync();
+            }
+
+            return workMonth;
+        }
+
+        public async Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId)
+        {
+            WorkMonth workMonth;
+
+            using (var _context = new TimeKeeperDbContext(_options))
+            {
+                workMonth = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).LastAsync();
             }
 
             return workMonth;

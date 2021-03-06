@@ -11,7 +11,7 @@ namespace TimeKeeper.Data.Repositories
 {
     public interface IOrganisationRepo
     {
-        public void AddOrganisationAsync(string name);
+        public void AddOrganisationAsync(Organisation organisation);
         public void AddSectionAsync(Organisation section, int parentId);
     }
 
@@ -24,11 +24,10 @@ namespace TimeKeeper.Data.Repositories
             _options = options;
         }
 
-        public async void AddOrganisationAsync(string name)
+        public async void AddOrganisationAsync(Organisation organisation)
         {
             using (var context = new TimeKeeperDbContext(_options))
             {
-                var organisation = new Organisation() { Name = name };
                 context.Organisation.Add(organisation);
                 await context.SaveChangesAsync();
             }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeKeeper.Ui.Data;
 
 namespace TimeKeeper.Data.Migrations
 {
     [DbContext(typeof(TimeKeeperDbContext))]
-    partial class TimeKeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210306143729_Renaming")]
+    partial class Renaming
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,15 +23,15 @@ namespace TimeKeeper.Data.Migrations
 
             modelBuilder.Entity("ApplicationUserOrganisation", b =>
                 {
-                    b.Property<string>("OrganisationUsersId")
+                    b.Property<string>("ApplicationUsersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("OrganissationsId")
+                    b.Property<int>("OrganisationsId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrganisationUsersId", "OrganissationsId");
+                    b.HasKey("ApplicationUsersId", "OrganisationsId");
 
-                    b.HasIndex("OrganissationsId");
+                    b.HasIndex("OrganisationsId");
 
                     b.ToTable("ApplicationUserOrganisation");
                 });
@@ -317,9 +319,6 @@ namespace TimeKeeper.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("ManagerId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -364,13 +363,13 @@ namespace TimeKeeper.Data.Migrations
                 {
                     b.HasOne("TimeKeeper.Data.Models.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("OrganisationUsersId")
+                        .HasForeignKey("ApplicationUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TimeKeeper.Data.Models.Organisation", null)
                         .WithMany()
-                        .HasForeignKey("OrganissationsId")
+                        .HasForeignKey("OrganisationsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

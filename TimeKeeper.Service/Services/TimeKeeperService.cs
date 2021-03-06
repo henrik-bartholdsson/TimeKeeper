@@ -11,8 +11,10 @@ namespace TimeKeeper.Service.Services
     {
         void AddDeviation(DeviationDto deviation);
         WorkMonthDto GetWorkMonthByUserId(string userId, int month, int year);
+        WorkMonthDto GetLastWorkMonthByUserId(string userId);
         IEnumerable<DeviationTypeDto> GetAllDeviationTypes();
         IEnumerable<Invitation> GetInvitations(string userId);
+        void AddOrganisation(string organisationName, string organisationManager);
     }
 
 
@@ -31,11 +33,19 @@ namespace TimeKeeper.Service.Services
         }
 
 
+        public void AddOrganisation(string organisationName, string organisationManager)
+        {
+            if (String.IsNullOrEmpty(organisationName))
+                throw new Exception("organisationName cannot be null or empty.");
+
+
+        }
+
         public IEnumerable<Invitation> GetInvitations(string userId)
         {
             var invitations = _wmRepo.GetInvitationsAsync(userId).Result;
-            
-            foreach(var i in invitations)
+
+            foreach (var i in invitations)
             {
                 var inviterName = _wmRepo.GetOrganisationASync(i.OrganisationId).Result;
                 i.OrganisationName = inviterName.Name;
@@ -63,7 +73,7 @@ namespace TimeKeeper.Service.Services
 
             var result = new List<DeviationTypeDto>();
 
-            foreach(var d in deviationTypes)
+            foreach (var d in deviationTypes)
             {
                 var ddto = _mapper.Map<DeviationTypeDto>(d);
                 result.Add(ddto);
@@ -78,6 +88,7 @@ namespace TimeKeeper.Service.Services
         {
             var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, month, year).Result;
 
+
             if (workMonth == null)
                 return null;
 
@@ -88,6 +99,23 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
+        public WorkMonthDto GetLastWorkMonthByUserId(string userId)
+        {
+            WorkMonth workMonth;
+            workMonth = _wmRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
+
+            if(workMonth == null)
+                workMonth = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
+
+            if (workMonth == null)
+                throw new Exception("No month found.");
+
+            var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
+
+            var result = SetWeekDaysToDeviations(workMonthDto);
+
+            return result;
+        }
 
 
         public void AddNewMonths()
@@ -130,10 +158,10 @@ namespace TimeKeeper.Service.Services
 
         private static WorkMonthDto SetWeekDaysToDeviations(WorkMonthDto workMonth)
         {
-                foreach(var d in workMonth.Deviations)
-                {
-                   d.NormalizedWeekDay = new DateTime(workMonth.Year, workMonth.Month, d.DayInMonth, 0, 0, 0).DayOfWeek.ToString() + $" {workMonth.Month}/{d.DayInMonth}";
-                }
+            foreach (var d in workMonth.Deviations)
+            {
+                d.NormalizedWeekDay = new DateTime(workMonth.Year, workMonth.Month, d.DayInMonth, 0, 0, 0).DayOfWeek.ToString() + $" {workMonth.Month}/{d.DayInMonth}";
+            }
 
             return workMonth;
         }

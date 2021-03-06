@@ -9,5 +9,6 @@ namespace TimeKeeper.Data.Models
         public string Name { get; set; }
         public ICollection<Organisation> Section { get; set; }
         public ICollection<ApplicationUser> OrganisationUsers { get; set; }
+        public string ManagerId { get; set; }
     }
 }
