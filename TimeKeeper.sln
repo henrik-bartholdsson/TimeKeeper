@@ -5,11 +5,16 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BE966856-5016-41A8-80AD-79EA45AC230E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeKeeper.Data", "TimeKeeper.Data\TimeKeeper.Data.csproj", "{4E3E39B1-1AA5-432C-AB95-4DD9F4180BE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Data", "TimeKeeper.Data\TimeKeeper.Data.csproj", "{4E3E39B1-1AA5-432C-AB95-4DD9F4180BE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeKeeper.Service", "TimeKeeper.Service\TimeKeeper.Service.csproj", "{09964B3E-B880-4DC7-BCD5-9D10D448F3E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Service", "TimeKeeper.Service\TimeKeeper.Service.csproj", "{09964B3E-B880-4DC7-BCD5-9D10D448F3E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeKeeper.Ui", "TimeKeeper.Ui\TimeKeeper.Ui.csproj", "{44D6AD23-A352-4BE1-B8BD-33878C9C162A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Ui", "TimeKeeper.Ui\TimeKeeper.Ui.csproj", "{44D6AD23-A352-4BE1-B8BD-33878C9C162A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAB38709-2C81-48DD-82E7-179F91524744}"
+	ProjectSection(SolutionItems) = preProject
+		ToDo.txt = ToDo.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,6 +14,6 @@ namespace TimeKeeper.Data.Models
         public bool IsSubmitted { get; set; }
         public bool IsApproved { get; set; }
         public string UserId { get; set; }
-        public List<Deviation> Deviations { get; set; }
+        public ICollection<Deviation> Deviations { get; set; }
     }
 }

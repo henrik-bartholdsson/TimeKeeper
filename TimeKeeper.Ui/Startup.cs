@@ -28,7 +28,7 @@ namespace TimeKeeper.Ui
             services.AddDbContext<TimeKeeperDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<TimeKeeperDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
