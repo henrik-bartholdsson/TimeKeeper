@@ -84,9 +84,6 @@ namespace TimeKeeper.Data.Repositories
                 workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(y => y.Deviations).ThenInclude(z => z.DeviationType).ToListAsync();
             }
 
-            if (workMonths.Count < 1)
-                throw new Exception("No month found");
-
             var workMonth = workMonths.FirstOrDefault();
 
             return workMonth;
@@ -101,9 +98,6 @@ namespace TimeKeeper.Data.Repositories
                 workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
             }
 
-            if (workMonths.Count < 1)
-                throw new Exception("No month found");
-
             var month = workMonths.OrderBy(y => y.Id).Last();
 
             return month;
@@ -117,9 +111,6 @@ namespace TimeKeeper.Data.Repositories
             {
                 workMonths = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
             }
-
-            if (workMonths.Count < 1)
-                throw new Exception("No month found");
 
             var month = workMonths.OrderBy(y => y.Id).Last();
 
