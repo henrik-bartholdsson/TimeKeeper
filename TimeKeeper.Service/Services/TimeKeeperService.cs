@@ -60,6 +60,10 @@ namespace TimeKeeper.Service.Services
             if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
+            var checkOwnerOfWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
+
+            if (checkOwnerOfWorkMonth.UserId != inputDeviation.userId)
+                throw new UnauthorizedAccessException();
 
             var result = _mapper.Map<Deviation>(inputDeviation);
 
@@ -86,6 +90,12 @@ namespace TimeKeeper.Service.Services
 
         public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
         {
+            var anyWorkMonthForUser = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
+
+            if (anyWorkMonthForUser == null)
+                throw new Exception("No month found");
+
+
             var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
 
             if (workMonth == null)
@@ -103,7 +113,7 @@ namespace TimeKeeper.Service.Services
             WorkMonth workMonth;
             workMonth = _wmRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
 
-            if(workMonth == null)
+            if (workMonth == null)
                 workMonth = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
 
             if (workMonth == null)

@@ -81,12 +81,15 @@ namespace TimeKeeper.Data.Repositories
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(y => y.Deviations).ThenInclude(z => z.DeviationType).ToListAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
             }
 
-            var workMonth = workMonths.FirstOrDefault();
+            if (workMonths.Count < 1)
+                return null;
 
-            return workMonth;
+            var result = workMonths.FirstOrDefault();
+
+            return result;
         }
 
         public async Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId)
@@ -95,12 +98,15 @@ namespace TimeKeeper.Data.Repositories
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
             }
 
-            var month = workMonths.OrderBy(y => y.Id).Last();
+            if (workMonths.Count < 1)
+                return null;
 
-            return month;
+            WorkMonth result = workMonths.OrderBy(x => x.Id).Last();
+
+            return result;
         }
 
         public async Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId)
@@ -109,12 +115,15 @@ namespace TimeKeeper.Data.Repositories
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(y => y.Id).Include(z => z.Deviations).ThenInclude(a => a.DeviationType).ToListAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId).OrderBy(x => x.Id).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
             }
 
-            var month = workMonths.OrderBy(y => y.Id).Last();
+            if (workMonths.Count < 1)
+                return null;
 
-            return month;
+            var result = workMonths.OrderBy(y => y.Id).Last();
+
+            return result;
         }
 
         public async Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync()

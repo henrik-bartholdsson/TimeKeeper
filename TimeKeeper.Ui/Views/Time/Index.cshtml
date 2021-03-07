@@ -6,7 +6,9 @@
 @Model.Year
 
 <div><a asp-action="Index" asp-route-changeMonth="-1" asp-route-year="@Model.Year" asp-route-month="@Model.Month"><</a> @Model.NormalizedMonthName <a asp-action="Index" asp-route-changeMonth="1" asp-route-year="@Model.Year" asp-route-month="@Model.Month">></a></div>
-<a class="btn-sm btn-primary" asp-action="Add" asp-controller="Time" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-monthId=@Model.Id>New Deviation</a>
+ @if (Model.IsApproved)
+ { <div style="color:blue; font-weight:600">Approved</div> }
+ else { <a class="btn-sm btn-primary" asp-action="Add" asp-controller="Time" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-monthId=@Model.Id>New Deviation</a> }
 <hr />
 @foreach (var d in Model.Deviations)
 {

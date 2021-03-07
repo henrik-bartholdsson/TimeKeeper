@@ -90,12 +90,14 @@ namespace TimeKeeper.Ui.Controllers
             {
                 try
                 {
-                    _service.AddDeviation(addDeviationViewModel.Deviation); // I denna metod måste man kolla så att användaren får lägga till deviation. + Kolla month Id
+                    _service.AddDeviation(addDeviationViewModel.Deviation);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                    ViewData["ErrorMessage"] = ex.Message;
+                    ViewData["Prompt"] = "Contact your manager.";
+                    return View("ErrorPage");
                 }
             }
 

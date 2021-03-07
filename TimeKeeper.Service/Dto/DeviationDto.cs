@@ -21,6 +21,7 @@ namespace TimeKeeper.Service.Dto
         public DeviationTypeDto DeviationType { get; set; }
         [Required]
         public int DeviationTypeId { get; set; }
+        [Required]
         public int WorkMonthId { get; set; }
 
         // Exstended none model attributes
