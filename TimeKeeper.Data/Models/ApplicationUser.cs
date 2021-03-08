@@ -5,6 +5,7 @@ namespace TimeKeeper.Data.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public int? MaximumNumberOfOrganisations { get; set; }
         public virtual ICollection<Organisation> Organissations { get; set; }
     }
 }
