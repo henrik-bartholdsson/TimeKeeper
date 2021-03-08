@@ -79,7 +79,6 @@ namespace TimeKeeper.Ui.Controllers
         }
 
 
-
         [HttpPost]
         public IActionResult Add(AddDeviationViewModel addDeviationViewModel)
         {
@@ -112,6 +111,10 @@ namespace TimeKeeper.Ui.Controllers
 
 
 
+
+
+
+        #region None action methods
         private SelectList GetDeviationTypesToSelectList(IEnumerable<DeviationTypeDto> deviationTypes)
         {
             return new SelectList(deviationTypes, "Id", "InfoText");
@@ -137,5 +140,7 @@ namespace TimeKeeper.Ui.Controllers
 
             return items;
         }
+
+        #endregion
     }
 }
