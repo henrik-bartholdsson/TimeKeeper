@@ -60,9 +60,15 @@ namespace TimeKeeper.Service.Services
             if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
-            var checkOwnerOfWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
+            var preCheckTargetWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
 
-            if (checkOwnerOfWorkMonth.UserId != inputDeviation.userId)
+            if (preCheckTargetWorkMonth.IsApproved)
+                throw new Exception("Cannot add deviation to allready approved month.");
+
+            if (preCheckTargetWorkMonth.IsSubmitted)
+                throw new Exception("The month is submitted, unsubmit and try again.");
+
+            if (preCheckTargetWorkMonth.UserId != inputDeviation.userId)
                 throw new UnauthorizedAccessException();
 
             var result = _mapper.Map<Deviation>(inputDeviation);
