@@ -3,3 +3,11 @@
 
 
 ValidateAntiForgeryToken
+
+
+Implement organisations:
+	ApplicationUser needs nOrganisations: int, for n of parent organisations, will be managed outside the application (by application provider)
+		If nOrganisations = 0, then the user is not an organisation owner.
+	WorkMonth must be associated with an organisation
+	Users must be invited to the organisation, by message, and then accept the invitation.
+	If users belongs to more then one organisation, the user will be able to switch between them when adding deviations.
