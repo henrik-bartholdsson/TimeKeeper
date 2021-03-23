@@ -54,6 +54,7 @@ namespace TimeKeeper.Service.Services
 
             organisation.ManagerId = user.Id;
             organisation.OrganisationOwner = user.Id;
+            organisation.Name = organisationName;
 
             _organisationRepo.AddOrganisationAsync(organisation);
         }
