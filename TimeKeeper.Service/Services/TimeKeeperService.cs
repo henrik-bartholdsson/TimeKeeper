@@ -212,7 +212,7 @@ namespace TimeKeeper.Service.Services
             var storedDto = _organisationRepo.GetOrganisationAsync(inputDto.Id).Result;
 
             storedDto.Name = inputDto.Name ?? storedDto.Name;
-            storedDto.FK_Parent_OrganisationId = inputDto.ParentOrganisationId ?? storedDto.FK_Parent_OrganisationId;
+            storedDto.FK_Parent_OrganisationId = inputDto.ParentOrganisationId;
             storedDto.ManagerId = inputDto.ManagerId ?? storedDto.ManagerId;
 
             return storedDto;

@@ -53,14 +53,15 @@ namespace TimeKeeper.Ui.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             OrganisationDto organisationDto = new OrganisationDto();
-            IEnumerable<OrganisationDto> storedOrganisations = new List<OrganisationDto>();
+            List<OrganisationDto> storedOrganisations = new List<OrganisationDto>();
 
             
             try
             {
-                storedOrganisations = _service.GetOrganisations(user.Id);
+                storedOrganisations = _service.GetOrganisations(user.Id).ToList();
                 organisationDto = _service.GetOrganisation(Id);
-                storedOrganisations = storedOrganisations.Where(x => x.Id != organisationDto.Id);
+                storedOrganisations = storedOrganisations.Where(x => x.Id != organisationDto.Id).ToList();
+                storedOrganisations.Add(new OrganisationDto { Id = 0, Name = "Set to parent" });
                 organisationDto.Id = Id;
             }
             catch
