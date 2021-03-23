@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Service.Dto;
 using TimeKeeper.Service.Services;
-using TimeKeeper.Ui.Models;
 using TimeKeeper.Ui.ViewModels;
 
 namespace TimeKeeper.Ui.Controllers

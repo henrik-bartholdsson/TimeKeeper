@@ -1,0 +1,42 @@
+﻿@model TimeKeeper.Ui.ViewModels.OrganisationsViewModel;
+@using TimeKeeper.Service.Dto;
+
+
+<h1>Manage organisations</h1>
+<a class="btn-sm" method="get" asp-action="Add" asp-controller="Organisations">Add Organisation</a>
+@{
+    await PrintOrganisations(@Model.Organisations);
+}
+
+
+<a onclick="AlertName()">Hello</a>
+
+
+<script type="text/javascript">
+
+    function AlertName() {
+
+        alert('You clicked ' + "!");
+        console.log('Logged!!')
+
+    }
+
+</script>
+
+@{
+    async Task<int> PrintOrganisations(IEnumerable<OrganisationDto> o)
+    {
+        <ul>
+            @foreach (var org in o)
+            {
+                <li><a class="btn-sm" method="get" asp-route-Id="@org.Id" asp-action="Edit" asp-controller="Organisations">@org.Name</a></li>
+
+                @if (org.Section != null)
+                {
+                    await PrintOrganisations(org.Section);
+                }
+            }
+        </ul>
+        return 0;
+    }
+}

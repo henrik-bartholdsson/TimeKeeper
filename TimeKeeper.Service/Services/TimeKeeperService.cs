@@ -14,7 +14,11 @@ namespace TimeKeeper.Service.Services
         WorkMonthDto GetLastWorkMonthByUserId(string userId);
         IEnumerable<DeviationTypeDto> GetAllDeviationTypes();
         IEnumerable<Invitation> GetInvitations(string userId);
-        void AddOrganisation(string organisationName, string organisationManager);
+        void AddOrganisation(string organisationName, ApplicationUser user);
+        IEnumerable<OrganisationDto> GetOrganisations(string userId);
+        OrganisationDto GetOrganisation(int id);
+        void UpdateOrganisation(OrganisationDto orgDto);
+        int GetNumberOfOrganisations(string userId);
     }
 
 
@@ -33,13 +37,27 @@ namespace TimeKeeper.Service.Services
         }
 
 
-        public void AddOrganisation(string organisationName, string organisationManager)
+        public void AddOrganisation(string organisationName, ApplicationUser user)
         {
             if (String.IsNullOrEmpty(organisationName))
-                throw new Exception("organisationName cannot be null or empty.");
+                throw new Exception("Organisation name cannot be null or empty.");
 
+            if (user == null)
+                throw new UnauthorizedAccessException();
 
+            var maxNumberOfOrganisations = _organisationRepo.GetNumberOfTopOrganisationsAsync(user.Id).Result;
+
+            if (user.MaximumNumberOfOrganisations <= maxNumberOfOrganisations)
+                throw new Exception("To many organisations.");
+
+            var organisation = new Organisation();
+
+            organisation.ManagerId = user.Id;
+            organisation.OrganisationOwner = user.Id;
+
+            _organisationRepo.AddOrganisationAsync(organisation);
         }
+
 
         public IEnumerable<Invitation> GetInvitations(string userId)
         {
@@ -93,7 +111,6 @@ namespace TimeKeeper.Service.Services
         }
 
 
-
         public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
         {
             var anyWorkMonthForUser = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
@@ -114,6 +131,7 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
+
         public WorkMonthDto GetLastWorkMonthByUserId(string userId)
         {
             WorkMonth workMonth;
@@ -133,6 +151,25 @@ namespace TimeKeeper.Service.Services
         }
 
 
+        public IEnumerable<OrganisationDto> GetOrganisations(string userId)
+        {
+            var organisations = _organisationRepo.GetTopOrganisationsAsync(userId).Result;
+
+            var orgDto = MapOrganisationsToDto(organisations);
+
+            return orgDto;
+        }
+
+
+        public OrganisationDto GetOrganisation(int id)
+        {
+            var organisation = _organisationRepo.GetOrganisationAsync(id).Result;
+            var organisationDto = _mapper.Map<OrganisationDto>(organisation);
+
+            return organisationDto;
+        }
+
+
         public void AddNewMonths()
         {
             // Add new months for all users that have the specified month Submitted.
@@ -143,14 +180,60 @@ namespace TimeKeeper.Service.Services
         }
 
 
+        public void UpdateOrganisation(OrganisationDto inputOrganisationDto)
+        {
+            if (inputOrganisationDto == null)
+                throw new Exception("No organisation specified.");
 
+            if (inputOrganisationDto.Id < 1)
+                throw new Exception("No organisation specified.");
+
+            var updatedOrganisation = GetOrganisationWithUpdatedFields(inputOrganisationDto);
+
+            _organisationRepo.UpdateOrganisationAsync(updatedOrganisation);
+        }
+
+
+        public int GetNumberOfOrganisations(string userId)
+        {
+            var result = _organisationRepo.GetNumberOfTopOrganisationsAsync(userId).Result;
+            return result;
+        }
 
 
 
         #region Private methods
 
+        private Organisation GetOrganisationWithUpdatedFields(OrganisationDto inputDto)
+        {
+            if (inputDto.Id <= 0)
+                throw new Exception("Bad id!");
 
+            var storedDto = _organisationRepo.GetOrganisationAsync(inputDto.Id).Result;
 
+            storedDto.Name = inputDto.Name ?? storedDto.Name;
+            storedDto.FK_Parent_OrganisationId = inputDto.ParentOrganisationId ?? storedDto.FK_Parent_OrganisationId;
+            storedDto.ManagerId = inputDto.ManagerId ?? storedDto.ManagerId;
+
+            return storedDto;
+        }
+
+        private ICollection<OrganisationDto> MapOrganisationsToDto(IEnumerable<Organisation> organisations)
+        {
+            var organisationDto = new List<OrganisationDto>();
+
+            foreach (var o in organisations)
+            {
+                var orgDto = _mapper.Map<OrganisationDto>(o);
+
+                if (o.Section != null)
+                    orgDto.Section = MapOrganisationsToDto(o.Section);
+
+                organisationDto.Add(orgDto);
+
+            }
+            return organisationDto;
+        }
 
         private bool ValidateInputDeviationInput(DeviationDto inputDeviation)
         {
@@ -180,6 +263,8 @@ namespace TimeKeeper.Service.Services
 
             return workMonth;
         }
+
+
 
         #endregion
     }

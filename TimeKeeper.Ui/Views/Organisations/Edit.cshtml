@@ -1,0 +1,42 @@
+﻿@model TimeKeeper.Service.Dto.OrganisationDto;
+
+
+@if (Model.IsOwner)
+{
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Title</label>
+        <input asp-for="Name" value="@Model.Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" /> |
+        <a class="btn btn-success" asp-action="Index">Back to List</a>
+    </div>
+    <div class="form-group">
+        <label asp-for="ParentOrganisationId" class="control-label">Category</label>
+        <select asp-for="ParentOrganisationId" class="form-control" asp-items="ViewBag.Parents">
+            <option value="">Please Select</option>
+        </select>
+        <span asp-validation-for="ParentOrganisationId" class="text-danger"></span>
+    </div>
+    @Html.HiddenFor(model => model.Id)
+</form>
+}
+else
+{
+    <p>@Model.Name</p>
+}
+
+<p>Invite people</p>
+
+    <>Users</>
+<ul>
+    @foreach (var u in Model.OrganisationUsers)
+    {
+        <li>
+            @u.UserName
+        </li>
+    }
+</ul>

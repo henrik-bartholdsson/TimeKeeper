@@ -12,6 +12,8 @@ namespace TimeKeeper.Ui
             CreateMap<Deviation, DeviationDto>();
             CreateMap<DeviationDto, Deviation>();
             CreateMap<DeviationType, DeviationTypeDto>();
+            CreateMap<Organisation, OrganisationDto>();
+            CreateMap<OrganisationDto, Organisation>();
         }
     }
 }

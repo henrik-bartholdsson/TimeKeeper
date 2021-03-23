@@ -7,7 +7,17 @@ ValidateAntiForgeryToken
 
 Implement organisations:
 	- ApplicationUser needs MaxNumberOfOrganisations: int, for n of parent organisations, will be managed outside the application (by application provider)
-		If nOrganisations = 0, then the user is not an organisation owner.
+		If maxNrOrganisations = 0, then the user is not an organisation owner.
+	If maxNrOrganisations > 0, show Manage Organisations on nav-bar.
 	- WorkMonth must be associated with an organisation
 	Users must be invited to the organisation, by message, and then accept the invitation.
 	If users belongs to more then one organisation, the user will be able to switch between them when adding deviations.
+
+
+	Håller på att fixa edit sidan för en organisation, ändra parent?
+	Bör kanske använda en ViewModel i stället som har organisation och annat kopplat, eller lägga till none-maped properties
+	Håller på att skapa Add-sidan för organisation.
+	har lagt till owner på organisation & CanBeOwner på OrganisationsViewModel för att skilja på CEO och chef.
+
+
+	GetTopOrganisations behöver nytt namn GetOrganisationsWithSubOrganisations() och göras om så att den tar med nästlade organisationer.

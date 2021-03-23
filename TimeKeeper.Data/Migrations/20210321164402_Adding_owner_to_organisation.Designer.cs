@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeKeeper.Ui.Data;
 
 namespace TimeKeeper.Data.Migrations
 {
     [DbContext(typeof(TimeKeeperDbContext))]
-    partial class TimeKeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210321164402_Adding_owner_to_organisation")]
+    partial class Adding_owner_to_organisation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -320,21 +322,24 @@ namespace TimeKeeper.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("FK_Parent_OrganisationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ManagerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OrganisationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("OrganisationOwner")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentOrganisationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("FK_Parent_OrganisationId");
+                    b.HasIndex("OrganisationId");
 
                     b.ToTable("Organisation");
                 });
@@ -458,7 +463,7 @@ namespace TimeKeeper.Data.Migrations
                 {
                     b.HasOne("TimeKeeper.Data.Models.Organisation", null)
                         .WithMany("Section")
-                        .HasForeignKey("FK_Parent_OrganisationId");
+                        .HasForeignKey("OrganisationId");
                 });
 
             modelBuilder.Entity("TimeKeeper.Data.Models.WorkMonth", b =>

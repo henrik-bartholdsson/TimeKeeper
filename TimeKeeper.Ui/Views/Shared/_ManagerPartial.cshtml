@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<TimeKeeper.Data.Models.ApplicationUser> SignInManager
+@inject UserManager<TimeKeeper.Data.Models.ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var signedInUser = UserManager.GetUserAsync(User).Result;
+    if (signedInUser.MaximumNumberOfOrganisations > 0)
+    {
+        <a class="nav-link text-dark" asp-area="" asp-controller="Organisations" asp-action="Index">Manage Organisations</a>
+    }
+}
