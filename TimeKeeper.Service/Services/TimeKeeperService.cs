@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Data.Repositories;
 using TimeKeeper.Service.Dto;
@@ -207,14 +208,15 @@ namespace TimeKeeper.Service.Services
 
         private Organisation GetOrganisationWithUpdatedFields(OrganisationDto inputDto)
         {
-            if (inputDto.Id <= 0)
-                throw new Exception("Bad id!");
-
             var storedDto = _organisationRepo.GetOrganisationAsync(inputDto.Id).Result;
 
             storedDto.Name = inputDto.Name ?? storedDto.Name;
-            storedDto.FK_Parent_OrganisationId = inputDto.ParentOrganisationId;
             storedDto.ManagerId = inputDto.ManagerId ?? storedDto.ManagerId;
+
+            storedDto.FK_Parent_OrganisationId = inputDto.ParentOrganisationId;
+
+            if (inputDto.ParentOrganisationId == 0 || inputDto.ParentOrganisationId == null)
+                storedDto.FK_Parent_OrganisationId = null;
 
             return storedDto;
         }
