@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Data.Repositories;
 using TimeKeeper.Service.Dto;
