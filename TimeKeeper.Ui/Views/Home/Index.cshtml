@@ -5,13 +5,24 @@
 @model List<TimeKeeper.Data.Models.Invitation>
 
 
-@if(@Model != null)
+@if (@Model != null)
 {
-    foreach(var inv in @Model)
+    foreach (var inv in @Model)
     {
-        <h3>@inv.OrganisationName</h3>
-        <h4>@inv.Header</h4>
-        <p>@inv.Message</p>
+        <div>
+            <hr/>
+            <h3>@inv.OrganisationName</h3>
+            <h4>@inv.Header</h4>
+            <p>@inv.Message</p>
+            <td>
+                <a class="btn btn-sm btn-primary" asp-controller="invitations" asp-action="Accept" asp-route-id="@inv.Id">Accept</a>
+                <a class="btn btn-sm btn-warning" asp-controller="invitations" asp-action="Reject" asp-route-id="@inv.Id">Reject</a>
+            </td>
+        </div>
     }
 
 }
+
+
+
+

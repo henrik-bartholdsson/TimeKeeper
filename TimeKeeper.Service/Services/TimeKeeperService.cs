@@ -19,6 +19,7 @@ namespace TimeKeeper.Service.Services
         OrganisationDto GetOrganisation(int id);
         void UpdateOrganisation(OrganisationDto orgDto);
         int GetNumberOfOrganisations(string userId);
+        void RejectInvitation(int id, string userId);
     }
 
 
@@ -201,6 +202,11 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
+
+        public void RejectInvitation(int id, string userId)
+        {
+            _organisationRepo.RejectInvitation(id, userId);
+        }
 
 
         #region Private methods

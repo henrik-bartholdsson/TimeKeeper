@@ -17,6 +17,8 @@ namespace TimeKeeper.Data.Repositories
         public Task<Organisation> GetOrganisationAsync(int id);
         public void UpdateOrganisationAsync(Organisation organisation);
         public Task<int> GetNumberOfTopOrganisationsAsync(string userId);
+
+        public void RejectInvitation(int id, string userId);
     }
 
     public class OrganisationRepo : IOrganisationRepo
@@ -88,6 +90,23 @@ namespace TimeKeeper.Data.Repositories
                 var organisations = await context.Organisation.Where(x => x.OrganisationOwner == userId && x.FK_Parent_OrganisationId == null).ToListAsync();
                 var nrOfOrganisations = organisations.Count();
                 return nrOfOrganisations;
+            }
+        }
+
+        public void RejectInvitation(int id, string userId) // Make async?
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+                var invitation = context.Invitations.Where(x => x.Id == id && x.UserId == userId).FirstOrDefault();
+
+                if (invitation == null)
+                    throw new Exception("Is null!");
+
+                //context.Invitations.Remove(invitation);
+
+                context.Remove(invitation);
+
+                context.SaveChanges();
             }
         }
     }
