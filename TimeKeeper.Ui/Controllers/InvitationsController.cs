@@ -26,7 +26,7 @@ namespace TimeKeeper.Ui.Controllers
             return View();
         }
 
-        [Route("/accept/id")]
+        [Route("/accept/{id}")]
         public async Task<IActionResult> Accept(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -38,7 +38,7 @@ namespace TimeKeeper.Ui.Controllers
             return null;
         }
 
-        [Route("/reject/id")]
+        [Route("/reject/{id}")]
         public async Task<IActionResult> Reject(int id)
         {
             var user = await _userManager.GetUserAsync(User);
