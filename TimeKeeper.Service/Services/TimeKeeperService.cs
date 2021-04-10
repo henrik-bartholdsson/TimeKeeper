@@ -75,20 +75,31 @@ namespace TimeKeeper.Service.Services
         }
 
 
-        public void AddDeviation(DeviationDto inputDeviation)
+        public void AddDeviation(DeviationDto inputDeviation) // What if WorkMonth.Id is manipulated?
         {
             if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
-            var preCheckTargetWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
+            var targetWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
 
-            if (preCheckTargetWorkMonth.IsApproved)
+            // Is user member of organisation?
+
+            if (targetWorkMonth == null)
+            {
+                targetWorkMonth = GetNotYetCreatedWorkmonth(inputDeviation.RequestedDate);
+                targetWorkMonth.UserId = inputDeviation.userId;
+                targetWorkMonth = _wmRepo.AddWorkMonth(targetWorkMonth).Result;
+                inputDeviation.WorkMonthId = targetWorkMonth.Id;
+            }
+                
+
+            if (targetWorkMonth.IsApproved)
                 throw new Exception("Cannot add deviation to allready approved month.");
 
-            if (preCheckTargetWorkMonth.IsSubmitted)
+            if (targetWorkMonth.IsSubmitted)
                 throw new Exception("The month is submitted, unsubmit and try again.");
 
-            if (preCheckTargetWorkMonth.UserId != inputDeviation.userId)
+            if (targetWorkMonth.UserId != inputDeviation.userId)
                 throw new UnauthorizedAccessException();
 
             var result = _mapper.Map<Deviation>(inputDeviation);
@@ -115,16 +126,13 @@ namespace TimeKeeper.Service.Services
 
         public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
         {
-            var anyWorkMonthForUser = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
-
-            if (anyWorkMonthForUser == null)
-                throw new Exception("No month found");
-
+            if (requestedDate > DateTime.Now)
+                requestedDate = DateTime.Now;
 
             var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
 
             if (workMonth == null)
-                return null;
+                workMonth = GetNotYetCreatedWorkmonth(requestedDate);
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
 
@@ -140,10 +148,7 @@ namespace TimeKeeper.Service.Services
             workMonth = _wmRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
 
             if (workMonth == null)
-                workMonth = _wmRepo.GetLastWorkMonthByUserIdAsync(userId).Result;
-
-            if (workMonth == null)
-                throw new Exception("No month found.");
+                workMonth = GetNotYetCreatedWorkmonth(DateTime.Now);
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
 
@@ -270,6 +275,20 @@ namespace TimeKeeper.Service.Services
             }
 
             return workMonth;
+        }
+
+        private WorkMonth GetNotYetCreatedWorkmonth(DateTime requestedDate)
+        {
+            return new WorkMonth
+            {
+                Deviations = null,
+                IsApproved = false,
+                IsSubmitted = false,
+                Month = requestedDate.Month,
+                Year = requestedDate.Year,
+                Organisation = null,
+                UserId = null
+            };
         }
 
 
