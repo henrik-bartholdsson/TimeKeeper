@@ -17,6 +17,7 @@ namespace TimeKeeper.Data.Repositories
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
         Task<IEnumerable<Invitation>> GetInvitationsAsync(string userID);
         Task<Organisation> GetOrganisationASync(int id);
+        Task<WorkMonth> AddWorkMonth(WorkMonth workMonth);
     }
 
     public class WorkMonthRepo : IWorkMonthRepo
@@ -26,6 +27,19 @@ namespace TimeKeeper.Data.Repositories
         public WorkMonthRepo(TimeKeeperDbContext context, DbContextOptions<TimeKeeperDbContext> options)
         {
             _options = options;
+        }
+
+
+        public async Task<WorkMonth> AddWorkMonth(WorkMonth workMonth)
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+
+                var result = context.Add(workMonth);
+                await context.SaveChangesAsync();
+
+                return result.Entity;
+            }
         }
 
 
