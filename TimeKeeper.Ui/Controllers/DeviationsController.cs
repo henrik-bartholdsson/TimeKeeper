@@ -14,12 +14,12 @@ using TimeKeeper.Ui.ViewModels;
 namespace TimeKeeper.Ui.Controllers
 {
     [Authorize]
-    public class TimeController : Controller
+    public class DeviationsController : Controller
     {
         private readonly ITimeKeeperService _service;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TimeController(ITimeKeeperService service, UserManager<ApplicationUser> userManager)
+        public DeviationsController(ITimeKeeperService service, UserManager<ApplicationUser> userManager)
         {
             _service = service;
             _userManager = userManager;
@@ -64,30 +64,30 @@ namespace TimeKeeper.Ui.Controllers
         [HttpGet]
         public IActionResult Add(string year, string month, int monthId)
         {
-            var addDeviationViewModel = new AddDeviationViewModel() { Deviation = new DeviationDto() };
+            var addDeviationViewModel = new DeviationsViewModel() { InputDeviation = new DeviationDto() };
 
-            addDeviationViewModel.Deviation.RequestedDate = DateTime.Parse($"{year}/{month}/01");
+            addDeviationViewModel.InputDeviation.RequestedDate = DateTime.Parse($"{year}/{month}/01");
             var deviationTypes = _service.GetAllDeviationTypes();
 
-            addDeviationViewModel.SelectDaysInMonth = GetAllDaysInMonthAndYear(addDeviationViewModel.Deviation.RequestedDate.Year, addDeviationViewModel.Deviation.RequestedDate.Month);
+            addDeviationViewModel.SelectDaysInMonth = GetAllDaysInMonthAndYear(addDeviationViewModel.InputDeviation.RequestedDate.Year, addDeviationViewModel.InputDeviation.RequestedDate.Month);
             addDeviationViewModel.SelectDeviations = GetDeviationTypesToSelectList(deviationTypes);
-            addDeviationViewModel.Deviation.WorkMonthId = monthId;
+            addDeviationViewModel.InputDeviation.WorkMonthId = monthId;
 
             return View("AddDeviation", addDeviationViewModel);
         }
 
 
         [HttpPost]
-        public IActionResult Add(AddDeviationViewModel addDeviationViewModel)
+        public IActionResult Add(DeviationsViewModel addDeviationViewModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            addDeviationViewModel.Deviation.userId = userId;
+            addDeviationViewModel.InputDeviation.userId = userId;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.AddDeviation(addDeviationViewModel.Deviation);
+                    _service.AddDeviation(addDeviationViewModel.InputDeviation);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -100,7 +100,7 @@ namespace TimeKeeper.Ui.Controllers
 
             var deviationTypes = _service.GetAllDeviationTypes();
 
-            addDeviationViewModel.SelectDaysInMonth = GetAllDaysInMonthAndYear(addDeviationViewModel.Deviation.RequestedDate.Year, addDeviationViewModel.Deviation.RequestedDate.Month);
+            addDeviationViewModel.SelectDaysInMonth = GetAllDaysInMonthAndYear(addDeviationViewModel.InputDeviation.RequestedDate.Year, addDeviationViewModel.InputDeviation.RequestedDate.Month);
             addDeviationViewModel.SelectDeviations = GetDeviationTypesToSelectList(deviationTypes);
 
             return View("AddDeviation", addDeviationViewModel);
