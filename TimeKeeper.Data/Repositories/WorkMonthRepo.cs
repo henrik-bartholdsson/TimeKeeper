@@ -9,7 +9,7 @@ namespace TimeKeeper.Data.Repositories
 {
     public interface IWorkMonthRepo
     {
-        void AddDeviationAsync(Deviation deviation);
+        Task<Deviation> AddDeviationAsync(Deviation deviation);
         Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
         Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId);
         Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId);
@@ -42,7 +42,6 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
-
         public async Task<Organisation> GetOrganisationASync(int id) // Maybe include this function in GetInvitationsAsync(string userId) instead ?????? need to redo the db in that case.
         {
             using (var context = new TimeKeeperDbContext(_options))
@@ -53,7 +52,6 @@ namespace TimeKeeper.Data.Repositories
                 return organisation;
             }
         }
-
 
         public async Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId)
         {
@@ -77,14 +75,14 @@ namespace TimeKeeper.Data.Repositories
             return month;
         }
 
-
-        public async void AddDeviationAsync(Deviation deviation)
+        public async Task<Deviation> AddDeviationAsync(Deviation deviation)
         {
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                var result = await _context.AddAsync(deviation);
-
+                var result = _context.Add(deviation);
                 await _context.SaveChangesAsync();
+
+                return result.Entity;
             }
         }
 

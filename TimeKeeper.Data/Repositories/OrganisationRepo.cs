@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Ui.Data;
@@ -12,10 +11,10 @@ namespace TimeKeeper.Data.Repositories
     public interface IOrganisationRepo
     {
         public Task<IEnumerable<Organisation>> GetTopOrganisationsAsync(string userId);
-        public void AddOrganisationAsync(Organisation organisation);
+        public Task<Organisation> AddOrganisationAsync(Organisation organisation);
         public void AddSectionAsync(Organisation section, int parentId);
         public Task<Organisation> GetOrganisationAsync(int id);
-        public void UpdateOrganisationAsync(Organisation organisation);
+        public Task<Organisation> UpdateOrganisationAsync(Organisation organisation);
         public Task<int> GetNumberOfTopOrganisationsAsync(string userId);
 
         public void RejectInvitation(int id, string userId);
@@ -30,12 +29,13 @@ namespace TimeKeeper.Data.Repositories
             _options = options;
         }
 
-        public async void AddOrganisationAsync(Organisation organisation)
+        public async Task<Organisation> AddOrganisationAsync(Organisation organisation)
         {
             using (var context = new TimeKeeperDbContext(_options))
             {
-                context.Organisation.Add(organisation);
+                var result = context.Organisation.Add(organisation);
                 await context.SaveChangesAsync();
+                return result.Entity;
             }
         }
 
@@ -74,12 +74,13 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
-        public async void UpdateOrganisationAsync(Organisation organisation)
+        public async Task<Organisation> UpdateOrganisationAsync(Organisation organisation)
         {
             using (var context = new TimeKeeperDbContext(_options))
             {
-                context.Update(organisation);
+                var result = context.Update(organisation);
                 await context.SaveChangesAsync();
+                return result.Entity;
             }
         }
 
