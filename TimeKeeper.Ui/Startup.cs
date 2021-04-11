@@ -36,9 +36,6 @@ namespace TimeKeeper.Ui
             services.AddAutoMapper(Assembly.Load("TimeKeeper.Ui"));
 
 
-
-            //services.AddScoped<IWorkMonthRepo, WorkMonthRepo>();
-            //services.AddScoped<IOrganisationRepo, OrganisationRepo>();
             services.AddScoped<ITimeKeeperRepo, TimeKeeperRepo>();
             services.AddScoped<ITimeKeeperService, TimeKeeperService>();
         }
