@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Data.Repositories;
 using TimeKeeper.Service.Dto;
@@ -10,12 +11,13 @@ namespace TimeKeeper.Service.Services
     public interface ITimeKeeperService
     {
         void AddDeviation(DeviationDto deviation);
-        WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate);
-        WorkMonthDto GetLastWorkMonthByUserId(string userId);
+        WorkMonthDto GetWorkMonth(string userId, int organisationId, DateTime requestedDate);
+        WorkMonthDto GetLastWorkMonth(string userId, int organisationId);
         IEnumerable<DeviationTypeDto> GetAllDeviationTypes();
         IEnumerable<Invitation> GetInvitations(string userId);
         void AddOrganisation(string organisationName, ApplicationUser user);
         IEnumerable<OrganisationDto> GetOrganisations(string userId);
+        IEnumerable<OrganisationDto> GetOrganisationsWhereUserIsMember(string userId);
         OrganisationDto GetOrganisation(int id);
         void UpdateOrganisation(OrganisationDto orgDto);
         int GetNumberOfOrganisations(string userId);
@@ -89,7 +91,7 @@ namespace TimeKeeper.Service.Services
                 targetWorkMonth = _timeKeeperRepo.AddWorkMonth(targetWorkMonth).Result;
                 inputDeviation.WorkMonthId = targetWorkMonth.Id;
             }
-                
+
 
             if (targetWorkMonth.IsApproved)
                 throw new Exception("Cannot add deviation to allready approved month.");
@@ -120,15 +122,20 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-        public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
+        public WorkMonthDto GetWorkMonth(string userId, int organisationId, DateTime requestedDate)
         {
+            ValidateMembership(userId, organisationId);
+
             if (requestedDate > DateTime.Now)
                 requestedDate = DateTime.Now;
 
-            var workMonth = _timeKeeperRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
+            var workMonth = _timeKeeperRepo.GetWorkMonthAsync(userId, organisationId, requestedDate.Month, requestedDate.Year).Result;
 
             if (workMonth == null)
+            {
                 workMonth = GetNotYetCreatedWorkmonth(requestedDate);
+                workMonth.Organisation = new Organisation { Id = organisationId };
+            }
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
 
@@ -137,13 +144,16 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-        public WorkMonthDto GetLastWorkMonthByUserId(string userId)
+        public WorkMonthDto GetLastWorkMonth(string userId, int organisationId)
         {
             WorkMonth workMonth;
-            workMonth = _timeKeeperRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
+            workMonth = _timeKeeperRepo.GetLastActiveWorkMonthAsync(userId, organisationId).Result;
 
             if (workMonth == null)
+            {
                 workMonth = GetNotYetCreatedWorkmonth(DateTime.Now);
+                workMonth.Organisation = new Organisation { Id = organisationId };
+            }
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
 
@@ -159,6 +169,15 @@ namespace TimeKeeper.Service.Services
             var orgDto = MapOrganisationsToDto(organisations);
 
             return orgDto;
+        }
+
+        public IEnumerable<OrganisationDto> GetOrganisationsWhereUserIsMember(string userId)
+        {
+            var organisations = _timeKeeperRepo.GetOrganisationsWhereUserIsMemberAsync(userId).Result;
+
+            var organisationsDto = MapOrganisationsToDto(organisations);
+
+            return organisationsDto;
         }
 
         public OrganisationDto GetOrganisation(int id)
@@ -202,8 +221,22 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.RejectInvitation(id, userId);
         }
 
+
+
         #region Private methods
 
+        private void ValidateMembership(string userId, int organisationId)
+        {
+            var org = _timeKeeperRepo.GetOrganisationWithUsersAsync(organisationId).Result;
+
+            if (org == null)
+                throw new Exception("No organisation found");
+
+            var user = org.OrganisationUsers.Where(x => x.Id == userId).FirstOrDefault();
+
+            if (user == null)
+                throw new Exception("Not member of organisation");
+        }
         private Organisation GetOrganisationWithUpdatedFields(OrganisationDto inputDto)
         {
             var storedDto = _timeKeeperRepo.GetOrganisationAsync(inputDto.Id).Result;
