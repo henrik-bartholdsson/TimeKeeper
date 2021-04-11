@@ -26,15 +26,19 @@ namespace TimeKeeper.Service.Services
 
     public class TimeKeeperService : ITimeKeeperService
     {
-        private readonly IOrganisationRepo _organisationRepo;
-        private readonly IWorkMonthRepo _wmRepo;
+        //private readonly IOrganisationRepo _organisationRepo;
+        //private readonly IWorkMonthRepo _wmRepo;
         private readonly IMapper _mapper;
 
-        public TimeKeeperService(IWorkMonthRepo wmRepo, IOrganisationRepo organisationRepo, IMapper mapper)
+        private readonly ITimeKeeperRepo _timeKeeperRepo;
+
+        public TimeKeeperService(ITimeKeeperRepo timeKeeperRepo, IMapper mapper)
         {
-            _wmRepo = wmRepo;
-            _organisationRepo = organisationRepo;
+            //_wmRepo = wmRepo;
+            //_organisationRepo = organisationRepo;
             _mapper = mapper;
+
+            _timeKeeperRepo = timeKeeperRepo;
         }
 
 
@@ -46,7 +50,7 @@ namespace TimeKeeper.Service.Services
             if (user == null)
                 throw new UnauthorizedAccessException();
 
-            var maxNumberOfOrganisations = _organisationRepo.GetNumberOfTopOrganisationsAsync(user.Id).Result;
+            var maxNumberOfOrganisations = _timeKeeperRepo.GetNumberOfTopOrganisationsAsync(user.Id).Result;
 
             if (user.MaximumNumberOfOrganisations <= maxNumberOfOrganisations)
                 throw new Exception("To many organisations.");
@@ -57,17 +61,17 @@ namespace TimeKeeper.Service.Services
             organisation.OrganisationOwner = user.Id;
             organisation.Name = organisationName;
 
-            _organisationRepo.AddOrganisationAsync(organisation);
+            _timeKeeperRepo.AddOrganisationAsync(organisation);
         }
 
 
         public IEnumerable<Invitation> GetInvitations(string userId)
         {
-            var invitations = _wmRepo.GetInvitationsAsync(userId).Result;
+            var invitations = _timeKeeperRepo.GetInvitationsAsync(userId).Result;
 
             foreach (var i in invitations)
             {
-                var inviterName = _wmRepo.GetOrganisationASync(i.OrganisationId).Result;
+                var inviterName = _timeKeeperRepo.GetOrganisationASync(i.OrganisationId).Result;
                 i.OrganisationName = inviterName.Name;
             }
 
@@ -80,7 +84,7 @@ namespace TimeKeeper.Service.Services
             if (inputDeviation == null)
                 throw new Exception("Bad input, deviation is null");
 
-            var targetWorkMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
+            var targetWorkMonth = _timeKeeperRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
 
             // Is user member of organisation?
 
@@ -88,7 +92,7 @@ namespace TimeKeeper.Service.Services
             {
                 targetWorkMonth = GetNotYetCreatedWorkmonth(inputDeviation.RequestedDate);
                 targetWorkMonth.UserId = inputDeviation.userId;
-                targetWorkMonth = _wmRepo.AddWorkMonth(targetWorkMonth).Result;
+                targetWorkMonth = _timeKeeperRepo.AddWorkMonth(targetWorkMonth).Result;
                 inputDeviation.WorkMonthId = targetWorkMonth.Id;
             }
                 
@@ -104,13 +108,13 @@ namespace TimeKeeper.Service.Services
 
             var result = _mapper.Map<Deviation>(inputDeviation);
 
-            _wmRepo.AddDeviationAsync(result);
+            _timeKeeperRepo.AddDeviationAsync(result);
         }
 
 
         public IEnumerable<DeviationTypeDto> GetAllDeviationTypes()
         {
-            var deviationTypes = _wmRepo.GetAllDeviationTypesAsync().Result;
+            var deviationTypes = _timeKeeperRepo.GetAllDeviationTypesAsync().Result;
 
             var result = new List<DeviationTypeDto>();
 
@@ -129,7 +133,7 @@ namespace TimeKeeper.Service.Services
             if (requestedDate > DateTime.Now)
                 requestedDate = DateTime.Now;
 
-            var workMonth = _wmRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
+            var workMonth = _timeKeeperRepo.GetWorkMonthByUserIdAsync(userId, requestedDate.Month, requestedDate.Year).Result;
 
             if (workMonth == null)
                 workMonth = GetNotYetCreatedWorkmonth(requestedDate);
@@ -145,7 +149,7 @@ namespace TimeKeeper.Service.Services
         public WorkMonthDto GetLastWorkMonthByUserId(string userId)
         {
             WorkMonth workMonth;
-            workMonth = _wmRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
+            workMonth = _timeKeeperRepo.GetLastActiveWorkMonthByUserIdAsync(userId).Result;
 
             if (workMonth == null)
                 workMonth = GetNotYetCreatedWorkmonth(DateTime.Now);
@@ -160,7 +164,7 @@ namespace TimeKeeper.Service.Services
 
         public IEnumerable<OrganisationDto> GetOrganisations(string userId)
         {
-            var organisations = _organisationRepo.GetTopOrganisationsAsync(userId).Result;
+            var organisations = _timeKeeperRepo.GetTopOrganisationsAsync(userId).Result;
 
             var orgDto = MapOrganisationsToDto(organisations);
 
@@ -170,7 +174,7 @@ namespace TimeKeeper.Service.Services
 
         public OrganisationDto GetOrganisation(int id)
         {
-            var organisation = _organisationRepo.GetOrganisationAsync(id).Result;
+            var organisation = _timeKeeperRepo.GetOrganisationAsync(id).Result;
             var organisationDto = _mapper.Map<OrganisationDto>(organisation);
 
             return organisationDto;
@@ -197,20 +201,20 @@ namespace TimeKeeper.Service.Services
 
             var updatedOrganisation = GetOrganisationWithUpdatedFields(inputOrganisationDto);
 
-            _organisationRepo.UpdateOrganisationAsync(updatedOrganisation);
+            _timeKeeperRepo.UpdateOrganisationAsync(updatedOrganisation);
         }
 
 
         public int GetNumberOfOrganisations(string userId)
         {
-            var result = _organisationRepo.GetNumberOfTopOrganisationsAsync(userId).Result;
+            var result = _timeKeeperRepo.GetNumberOfTopOrganisationsAsync(userId).Result;
             return result;
         }
 
 
         public void RejectInvitation(int id, string userId)
         {
-            _organisationRepo.RejectInvitation(id, userId);
+            _timeKeeperRepo.RejectInvitation(id, userId);
         }
 
 
@@ -218,7 +222,7 @@ namespace TimeKeeper.Service.Services
 
         private Organisation GetOrganisationWithUpdatedFields(OrganisationDto inputDto)
         {
-            var storedDto = _organisationRepo.GetOrganisationAsync(inputDto.Id).Result;
+            var storedDto = _timeKeeperRepo.GetOrganisationAsync(inputDto.Id).Result;
 
             storedDto.Name = inputDto.Name ?? storedDto.Name;
             storedDto.ManagerId = inputDto.ManagerId ?? storedDto.ManagerId;
@@ -250,7 +254,7 @@ namespace TimeKeeper.Service.Services
 
         private bool ValidateInputDeviationInput(DeviationDto inputDeviation)
         {
-            var requestedMonth = _wmRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
+            var requestedMonth = _timeKeeperRepo.GetWorkMonthByIdAsync(inputDeviation.WorkMonthId).Result;
 
             if (requestedMonth.IsApproved)
                 throw new Exception("Cannot add deviations to allready approved months.");
