@@ -60,7 +60,6 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.AddOrganisationAsync(organisation);
         }
 
-
         public IEnumerable<Invitation> GetInvitations(string userId)
         {
             var invitations = _timeKeeperRepo.GetInvitationsAsync(userId).Result;
@@ -73,7 +72,6 @@ namespace TimeKeeper.Service.Services
 
             return invitations;
         }
-
 
         public void AddDeviation(DeviationDto inputDeviation) // What if WorkMonth.Id is manipulated?
         {
@@ -107,7 +105,6 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.AddDeviationAsync(result);
         }
 
-
         public IEnumerable<DeviationTypeDto> GetAllDeviationTypes()
         {
             var deviationTypes = _timeKeeperRepo.GetAllDeviationTypesAsync().Result;
@@ -122,7 +119,6 @@ namespace TimeKeeper.Service.Services
 
             return result;
         }
-
 
         public WorkMonthDto GetWorkMonthByUserId(string userId, DateTime requestedDate)
         {
@@ -141,7 +137,6 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-
         public WorkMonthDto GetLastWorkMonthByUserId(string userId)
         {
             WorkMonth workMonth;
@@ -157,7 +152,6 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-
         public IEnumerable<OrganisationDto> GetOrganisations(string userId)
         {
             var organisations = _timeKeeperRepo.GetTopOrganisationsAsync(userId).Result;
@@ -167,7 +161,6 @@ namespace TimeKeeper.Service.Services
             return orgDto;
         }
 
-
         public OrganisationDto GetOrganisation(int id)
         {
             var organisation = _timeKeeperRepo.GetOrganisationAsync(id).Result;
@@ -175,7 +168,6 @@ namespace TimeKeeper.Service.Services
 
             return organisationDto;
         }
-
 
         public void AddNewMonths()
         {
@@ -185,7 +177,6 @@ namespace TimeKeeper.Service.Services
 
 
         }
-
 
         public void UpdateOrganisation(OrganisationDto inputOrganisationDto)
         {
@@ -200,19 +191,16 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.UpdateOrganisationAsync(updatedOrganisation);
         }
 
-
         public int GetNumberOfOrganisations(string userId)
         {
             var result = _timeKeeperRepo.GetNumberOfTopOrganisationsAsync(userId).Result;
             return result;
         }
 
-
         public void RejectInvitation(int id, string userId)
         {
             _timeKeeperRepo.RejectInvitation(id, userId);
         }
-
 
         #region Private methods
 
@@ -266,7 +254,6 @@ namespace TimeKeeper.Service.Services
             return true;
         }
 
-
         private static WorkMonthDto SetWeekDaysToDeviations(WorkMonthDto workMonth)
         {
             foreach (var d in workMonth.Deviations)
@@ -290,8 +277,6 @@ namespace TimeKeeper.Service.Services
                 UserId = null
             };
         }
-
-
 
         #endregion
     }
