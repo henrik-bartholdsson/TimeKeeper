@@ -27,27 +27,34 @@ namespace TimeKeeper.Ui.Controllers
 
 
         [HttpGet]
-        public IActionResult Index(string year, string month, int changeMonth)
+        public IActionResult Index(string year, string month, int changeMonth, int organisationId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             DateTime requestedDate;
             WorkMonthDto workMonth;
 
-            try
+            var aa = _service.GetOrganisationsWhereUserIsMember(userId).ToList();
+
+            if (organisationId == 0) // Must be refactored
+            {
+                organisationId = aa[0].Id;
+            }
+
+            try // Must be refactored
             {
                 if (String.IsNullOrEmpty(year) || String.IsNullOrEmpty(month))
                 {
-                    workMonth = _service.GetLastWorkMonthByUserId(userId);
+                    workMonth = _service.GetLastWorkMonth(userId, organisationId);
                     return View(workMonth);
                 }
 
                 requestedDate = DateTime.Parse($"{year}/{month}/01").AddMonths(changeMonth);
-                workMonth = _service.GetWorkMonthByUserId(userId, requestedDate);
+                workMonth = _service.GetWorkMonth(userId, organisationId, requestedDate);
 
                 if (workMonth == null)
                 {
                     requestedDate = DateTime.Parse($"{year}/{month}/01");
-                    workMonth = _service.GetWorkMonthByUserId(userId, requestedDate);
+                    workMonth = _service.GetWorkMonth(userId, organisationId, requestedDate);
                 }
 
                 return View(workMonth);

@@ -12,16 +12,18 @@ namespace TimeKeeper.Data.Repositories
     public interface ITimeKeeperRepo
     {
         Task<IEnumerable<Organisation>> GetTopOrganisationsAsync(string userId);
+        Task<IEnumerable<Organisation>> GetOrganisationsWhereUserIsMemberAsync(string userId);
         Task<Organisation> AddOrganisationAsync(Organisation organisation);
         void AddSectionAsync(Organisation section, int parentId);
         Task<Organisation> GetOrganisationAsync(int id);
+        Task<Organisation> GetOrganisationWithUsersAsync(int id);
         Task<Organisation> UpdateOrganisationAsync(Organisation organisation);
         Task<int> GetNumberOfTopOrganisationsAsync(string userId);
         void RejectInvitation(int id, string userId);
         Task<Deviation> AddDeviationAsync(Deviation deviation);
-        Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year);
+        Task<WorkMonth> GetWorkMonthAsync(string userId, int organisationId, int month, int year);
         Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId);
-        Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId);
+        Task<WorkMonth> GetLastActiveWorkMonthAsync(string userId, int organisationId);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
         Task<IEnumerable<Invitation>> GetInvitationsAsync(string userID);
@@ -77,12 +79,31 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
+        public async Task<Organisation> GetOrganisationWithUsersAsync(int id)
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+                var organisation = await context.Organisation.Where(x => x.Id == id).Include("OrganisationUsers").FirstOrDefaultAsync();
+                return organisation;
+            }
+        }
+
         public async Task<IEnumerable<Organisation>> GetTopOrganisationsAsync(string userId)
         {
             using (var context = new TimeKeeperDbContext(_options))
             {
                 var organisations = await context.Organisation.Where(x => x.ManagerId == userId).Include("Section").ToListAsync();
                 return organisations.Where(x => x.FK_Parent_OrganisationId == null);
+            }
+        }
+
+        public async Task<IEnumerable<Organisation>> GetOrganisationsWhereUserIsMemberAsync(string userId)
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+                var organisations = await context.Organisation.Where(x => x.OrganisationUsers.Contains(new ApplicationUser{ Id = userId })).ToListAsync();
+
+                return organisations;
             }
         }
 
@@ -179,13 +200,21 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
-        public async Task<WorkMonth> GetWorkMonthByUserIdAsync(string userId, int month, int year)
+        public async Task<WorkMonth> GetWorkMonthAsync(string userId, int organisationId, int month, int year)
         {
             List<WorkMonth> workMonths;
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.Month == month && x.Year == year).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
+                workMonths = await _context.WorkMonths.Where(
+                    x => x.UserId == userId
+                    && x.Month == month
+                    && x.Year == year
+                    && x.Organisation.Id == organisationId)
+                    .Include(x => x.Organisation)
+                    .Include(x => x.Deviations)
+                    .ThenInclude(x => x.DeviationType)
+                    .ToListAsync();
             }
 
             if (workMonths.Count < 1)
@@ -196,13 +225,13 @@ namespace TimeKeeper.Data.Repositories
             return result;
         }
 
-        public async Task<WorkMonth> GetLastActiveWorkMonthByUserIdAsync(string userId)
+        public async Task<WorkMonth> GetLastActiveWorkMonthAsync(string userId, int organisationId)
         {
             List<WorkMonth> workMonths;
 
             using (var _context = new TimeKeeperDbContext(_options))
             {
-                workMonths = await _context.WorkMonths.Where(x => x.UserId == userId && x.IsApproved == false).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
+                workMonths = await _context.WorkMonths.Where(x => x.Organisation.Id == organisationId && x.UserId == userId && x.IsApproved == false).Include(x => x.Organisation).Include(x => x.Deviations).ThenInclude(x => x.DeviationType).ToListAsync();
             }
 
             if (workMonths.Count < 1)
