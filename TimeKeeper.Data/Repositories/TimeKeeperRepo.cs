@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Ui.Data;
@@ -26,9 +25,13 @@ namespace TimeKeeper.Data.Repositories
         Task<WorkMonth> GetLastActiveWorkMonthAsync(string userId, int organisationId);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
-        Task<IEnumerable<Invitation>> GetInvitationsAsync(string userID);
+        Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId);
+        Task<Invitation> GetInvitationAsync(int id);
+        Task<Invitation> UpdateInvitationAsync(Invitation invitation);
         Task<Organisation> GetOrganisationASync(int id);
         Task<WorkMonth> AddWorkMonth(WorkMonth workMonth);
+        Task<ApplicationUser> GetApplicationUserAsync(string id);
+        Task<ApplicationUser> UpdateApplicationUserAsync(ApplicationUser applicationUser);
     }
 
 
@@ -178,6 +181,29 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
+        public async Task<Invitation> GetInvitationAsync(int id)
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+
+                Invitation invitation = await context.Invitations.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                return invitation;
+            }
+        }
+
+        public async Task<Invitation> UpdateInvitationAsync(Invitation invitation)
+        {
+            using (var context = new TimeKeeperDbContext(_options))
+            {
+
+                context.Invitations.Update(invitation);
+                await context.SaveChangesAsync();
+
+                return invitation;
+            }
+        }
+
         public async Task<WorkMonth> GetWorkMonthByIdAsync(int Id)
         {
             WorkMonth month;
@@ -270,5 +296,23 @@ namespace TimeKeeper.Data.Repositories
             return result;
         }
 
+        public async Task<ApplicationUser> GetApplicationUserAsync(string id)
+        {
+            using (var _context = new TimeKeeperDbContext(_options))
+            {
+                var user = await _context.AspNetUsers.Where(x => x.Id == id).Include("Organissations").FirstOrDefaultAsync();
+                return user;
+            }
+        }
+
+        public async Task<ApplicationUser> UpdateApplicationUserAsync(ApplicationUser applicationUser)
+        {
+            using (var _context = new TimeKeeperDbContext(_options))
+            {
+                _context.AspNetUsers.Update(applicationUser);
+                await _context.SaveChangesAsync();
+                return applicationUser;
+            }
+        }
     }
 }

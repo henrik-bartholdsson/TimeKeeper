@@ -29,7 +29,6 @@ namespace TimeKeeper.Ui.Controllers
 
             var invitations = _service.GetInvitations(userName);
 
-
             return View(invitations);
         }
 

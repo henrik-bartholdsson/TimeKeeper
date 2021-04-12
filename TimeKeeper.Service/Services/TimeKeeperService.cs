@@ -22,6 +22,7 @@ namespace TimeKeeper.Service.Services
         void UpdateOrganisation(OrganisationDto orgDto);
         int GetNumberOfOrganisations(string userId);
         void RejectInvitation(int id, string userId);
+        void AcceptInvotation(int id, string userId);
     }
 
 
@@ -72,7 +73,13 @@ namespace TimeKeeper.Service.Services
                 i.OrganisationName = inviterName.Name;
             }
 
-            return invitations;
+            var result = new List<Invitation>();
+
+            foreach(var i in invitations)
+                if (i.requireAction)
+                    result.Add(i);
+
+            return result;
         }
 
         public void AddDeviation(DeviationDto inputDeviation) // What if WorkMonth.Id is manipulated?
@@ -221,6 +228,29 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.RejectInvitation(id, userId);
         }
 
+        public void AcceptInvotation(int id, string userId)
+        {
+            var invitation = _timeKeeperRepo.GetInvitationAsync(id).Result;
+            var user = _timeKeeperRepo.GetApplicationUserAsync(userId).Result;
+            
+
+            if (invitation.UserId != user.Id)
+                throw new Exception("Wrong user");
+
+            if (!invitation.requireAction)
+                throw new Exception("Requested handled invitation");
+
+            var organisation = _timeKeeperRepo.GetOrganisationAsync(invitation.OrganisationId).Result;
+
+            invitation.requireAction = false;
+            user.Organissations = new List<Organisation>();
+            user.Organissations.Add(organisation);
+
+            _timeKeeperRepo.UpdateInvitationAsync(invitation);
+            var hej = _timeKeeperRepo.UpdateApplicationUserAsync(user).Result;
+
+            
+        }
 
 
         #region Private methods

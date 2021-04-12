@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeKeeper.Ui.Data;
 
 namespace TimeKeeper.Data.Migrations
 {
     [DbContext(typeof(TimeKeeperDbContext))]
-    partial class TimeKeeperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210412154727_Add_require-bool_to_Invitation")]
+    partial class Add_requirebool_to_Invitation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

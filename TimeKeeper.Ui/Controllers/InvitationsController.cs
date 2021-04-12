@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Service.Services;
@@ -29,13 +30,22 @@ namespace TimeKeeper.Ui.Controllers
         [Route("/accept/{id}")]
         public async Task<IActionResult> Accept(int id)
         {
+            
             var user = await _userManager.GetUserAsync(User);
 
+            try
+            {
+                _service.AcceptInvotation(id, user.Id);
+            }
+            catch(Exception ex)
+            {
+                var a = ex.Message;
+                var b = a;
+            }
 
-            var a = id;
+            
 
-
-            return null;
+            return RedirectToAction("Index", "Home", "");
         }
 
         [Route("/reject/{id}")]
