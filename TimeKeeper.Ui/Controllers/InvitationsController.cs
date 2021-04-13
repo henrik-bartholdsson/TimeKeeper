@@ -30,30 +30,39 @@ namespace TimeKeeper.Ui.Controllers
         [Route("/accept/{id}")]
         public async Task<IActionResult> Accept(int id)
         {
-            
+
             var user = await _userManager.GetUserAsync(User);
 
             try
             {
                 _service.AcceptInvotation(id, user.Id);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                var a = ex.Message;
-                var b = a;
+                ViewData["ErrorMessage"] = ex.Message;
+                ViewData["Prompt"] = "Please contact your manager....";
+                return View("ErrorPage");
             }
-
-            
 
             return RedirectToAction("Index", "Home", "");
         }
+
 
         [Route("/reject/{id}")]
         public async Task<IActionResult> Reject(int id)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            _service.RejectInvitation(id, user.Id);
+            try
+            {
+                _service.RejectInvitation(id, user.Id);
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = ex.Message;
+                ViewData["Prompt"] = "Please contact your manager....";
+                return View("ErrorPage");
+            }
 
             return RedirectToAction("Index", "Home", "");
         }
