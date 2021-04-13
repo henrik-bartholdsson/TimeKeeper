@@ -66,7 +66,7 @@ namespace TimeKeeper.Service.Services
 
         public IEnumerable<Invitation> GetInvitations(string userId)
         {
-            var invitations = _timeKeeperRepo.GetInvitationsAsync(userId).Result;
+            var invitations = _timeKeeperRepo.GetActiveInvitationsAsync(userId).Result;
 
             foreach (var i in invitations)
             {
@@ -228,9 +228,11 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-        public void RejectInvitation(int id, string userId) // Refactor this
+        public void RejectInvitation(int id, string userId)
         {
-            _timeKeeperRepo.RejectInvitation(id, userId);
+            var invitation = _timeKeeperRepo.GetInvitationAsync(id).Result;
+            invitation.requireAction = false;
+            _timeKeeperRepo.UpdateInvitationAsync(invitation);
         }
 
         public void AcceptInvotation(int id, string userId)

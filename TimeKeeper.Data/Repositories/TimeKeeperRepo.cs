@@ -18,14 +18,13 @@ namespace TimeKeeper.Data.Repositories
         Task<Organisation> GetOrganisationWithUsersAsync(int id);
         Task<Organisation> UpdateOrganisationAsync(Organisation organisation);
         Task<int> GetNumberOfTopOrganisationsAsync(string userId);
-        void RejectInvitation(int id, string userId);
         Task<Deviation> AddDeviationAsync(Deviation deviation);
         Task<WorkMonth> GetWorkMonthAsync(string userId, int organisationId, int month, int year);
         Task<WorkMonth> GetLastWorkMonthByUserIdAsync(string userId);
         Task<WorkMonth> GetLastActiveWorkMonthAsync(string userId, int organisationId);
         Task<IEnumerable<DeviationType>> GetAllDeviationTypesAsync();
         Task<WorkMonth> GetWorkMonthByIdAsync(int Id);
-        Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId);
+        Task<IEnumerable<Invitation>> GetActiveInvitationsAsync(string userId);
         Task<Invitation> GetInvitationAsync(int id);
         Task<Invitation> UpdateInvitationAsync(Invitation invitation);
         Task<WorkMonth> AddWorkMonth(WorkMonth workMonth);
@@ -129,23 +128,6 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
-        public void RejectInvitation(int id, string userId) // Make async?
-        {
-            using (var context = new TimeKeeperDbContext(_options))
-            {
-                var invitation = context.Invitations.Where(x => x.Id == id && x.UserId == userId).FirstOrDefault();
-
-                if (invitation == null)
-                    throw new Exception("Is null!");
-
-                //context.Invitations.Remove(invitation);
-
-                context.Remove(invitation);
-
-                context.SaveChanges();
-            }
-        }
-
         public async Task<WorkMonth> AddWorkMonth(WorkMonth workMonth)
         {
             using (var context = new TimeKeeperDbContext(_options))
@@ -158,12 +140,12 @@ namespace TimeKeeper.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId)
+        public async Task<IEnumerable<Invitation>> GetActiveInvitationsAsync(string userId)
         {
             using (var context = new TimeKeeperDbContext(_options))
             {
 
-                List<Invitation> invitations = await context.Invitations.Where(x => x.UserId == userId).ToListAsync();
+                List<Invitation> invitations = await context.Invitations.Where(x => x.UserId == userId && x.requireAction == true).ToListAsync();
 
                 return invitations;
             }
