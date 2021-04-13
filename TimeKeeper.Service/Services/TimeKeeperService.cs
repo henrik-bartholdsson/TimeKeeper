@@ -70,7 +70,7 @@ namespace TimeKeeper.Service.Services
 
             foreach (var i in invitations)
             {
-                var inviterName = _timeKeeperRepo.GetOrganisationASync(i.OrganisationId).Result;
+                var inviterName = _timeKeeperRepo.GetOrganisationAsync(i.OrganisationId).Result;
                 i.OrganisationName = inviterName.Name;
             }
 

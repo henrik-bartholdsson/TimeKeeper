@@ -28,7 +28,6 @@ namespace TimeKeeper.Data.Repositories
         Task<IEnumerable<Invitation>> GetInvitationsAsync(string userId);
         Task<Invitation> GetInvitationAsync(int id);
         Task<Invitation> UpdateInvitationAsync(Invitation invitation);
-        Task<Organisation> GetOrganisationASync(int id);
         Task<WorkMonth> AddWorkMonth(WorkMonth workMonth);
         Task<ApplicationUser> GetApplicationUserAsync(string id);
         Task<ApplicationUser> UpdateApplicationUserAsync(ApplicationUser applicationUser);
@@ -156,17 +155,6 @@ namespace TimeKeeper.Data.Repositories
                 await context.SaveChangesAsync();
 
                 return result.Entity;
-            }
-        }
-
-        public async Task<Organisation> GetOrganisationASync(int id) // Maybe include this function in GetInvitationsAsync(string userId) instead ?????? need to redo the db in that case.
-        {
-            using (var context = new TimeKeeperDbContext(_options))
-            {
-
-                Organisation organisation = await context.Organisation.Where(x => x.Id == id).FirstOrDefaultAsync();
-
-                return organisation;
             }
         }
 
