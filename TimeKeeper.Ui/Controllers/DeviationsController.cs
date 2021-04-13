@@ -27,18 +27,15 @@ namespace TimeKeeper.Ui.Controllers
 
 
         [HttpGet]
-        public IActionResult Index(string year, string month, int changeMonth, int organisationId)
+        public IActionResult Index(string year, string month, int changeMonth)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             DateTime requestedDate;
             WorkMonthDto workMonth;
 
-            var aa = _service.GetOrganisationsWhereUserIsMember(userId).ToList();
+            var currentOrganisation = _service.GetCurrentOrganisation(userId);
+            var organisationId = currentOrganisation.Id;
 
-            if (organisationId == 0) // Must be refactored
-            {
-                organisationId = aa[0].Id;
-            }
 
             try // Must be refactored
             {

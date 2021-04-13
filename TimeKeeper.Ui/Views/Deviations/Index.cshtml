@@ -1,8 +1,8 @@
 ﻿@model TimeKeeper.Service.Dto.WorkMonthDto
 
-@Model.Year
+@Model.Year @Model.OrganisationName
 
-<div><a asp-action="Index" asp-route-changeMonth="-1" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-organisationId="@Model.OrganisationId"><</a> @Model.NormalizedMonthName <a asp-action="Index" asp-route-changeMonth="1" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-organisationId="@Model.OrganisationId">></a></div>
+<div><a asp-action="Index" asp-route-changeMonth="-1" asp-route-year="@Model.Year" asp-route-month="@Model.Month"><</a> @Model.NormalizedMonthName <a asp-action="Index" asp-route-changeMonth="1" asp-route-year="@Model.Year" asp-route-month="@Model.Month">></a></div>
  @if (Model.IsApproved)
  { <div style="color:blue; font-weight:600">Approved</div> }
  else { <a class="btn-sm btn-primary" asp-action="Add" asp-controller="Deviations" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-monthId=@Model.Id>New Deviation</a> }

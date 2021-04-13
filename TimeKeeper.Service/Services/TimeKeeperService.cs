@@ -23,6 +23,7 @@ namespace TimeKeeper.Service.Services
         int GetNumberOfOrganisations(string userId);
         void RejectInvitation(int id, string userId);
         void AcceptInvotation(int id, string userId);
+        OrganisationDto GetCurrentOrganisation(string userId);
     }
 
 
@@ -132,6 +133,7 @@ namespace TimeKeeper.Service.Services
         public WorkMonthDto GetWorkMonth(string userId, int organisationId, DateTime requestedDate)
         {
             ValidateMembership(userId, organisationId);
+            var organisation = _timeKeeperRepo.GetOrganisationAsync(organisationId).Result;
 
             if (requestedDate > DateTime.Now)
                 requestedDate = DateTime.Now;
@@ -145,6 +147,7 @@ namespace TimeKeeper.Service.Services
             }
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
+            workMonthDto.OrganisationName = organisation.Name;
 
             var result = SetWeekDaysToDeviations(workMonthDto);
 
@@ -155,6 +158,7 @@ namespace TimeKeeper.Service.Services
         {
             WorkMonth workMonth;
             workMonth = _timeKeeperRepo.GetLastActiveWorkMonthAsync(userId, organisationId).Result;
+            var organisation = _timeKeeperRepo.GetOrganisationAsync(organisationId).Result;
 
             if (workMonth == null)
             {
@@ -163,6 +167,7 @@ namespace TimeKeeper.Service.Services
             }
 
             var workMonthDto = _mapper.Map<WorkMonthDto>(workMonth);
+            workMonthDto.OrganisationName = organisation.Name;
 
             var result = SetWeekDaysToDeviations(workMonthDto);
 
@@ -223,7 +228,7 @@ namespace TimeKeeper.Service.Services
             return result;
         }
 
-        public void RejectInvitation(int id, string userId)
+        public void RejectInvitation(int id, string userId) // Refactor this
         {
             _timeKeeperRepo.RejectInvitation(id, userId);
         }
@@ -250,6 +255,23 @@ namespace TimeKeeper.Service.Services
             var hej = _timeKeeperRepo.UpdateApplicationUserAsync(user).Result;
 
             
+        }
+
+        public OrganisationDto GetCurrentOrganisation(string userId)
+        {
+            var user = _timeKeeperRepo.GetApplicationUserAsync(userId).Result;
+            var organisation = _timeKeeperRepo.GetOrganisationsWhereUserIsMemberAsync(userId).Result;
+
+
+            if (organisation == null)
+                throw new Exception("No organisation found");
+
+            var organisationDto = MapOrganisationsToDto(organisation).ToList();
+
+            if (user.CurrentOrganisationId == 0)
+                return organisationDto[0];
+
+            return organisationDto.Where(x => x.Id == user.CurrentOrganisationId).FirstOrDefault();
         }
 
 

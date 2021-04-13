@@ -15,5 +15,6 @@ namespace TimeKeeper.Service.Dto
         public int OrganisationId { get; set; }
         public List<DeviationDto> Deviations { get; set; }
         public string NormalizedMonthName { get => new DateTime(Year, Month, 1, 0, 0, 0).ToString("MMMM"); }
+        public string OrganisationName { get; set; }
     }
 }
