@@ -40,9 +40,11 @@ namespace TimeKeeper.Ui.Controllers
                 organisationsViewModel = new OrganisationsViewModel();
                 organisationsViewModel.Organisations = organisations;
             }
-            catch
+            catch(Exception ex)
             {
-
+                ViewData["ErrorMessage"] = ex.Message;
+                ViewData["Prompt"] = "Please contact your manager....";
+                return View("ErrorPage");
             }
 
             return View(organisationsViewModel);
@@ -64,9 +66,11 @@ namespace TimeKeeper.Ui.Controllers
                 storedOrganisations.Add(new OrganisationDto { Id = 0, Name = "Set to parent" });
                 organisationDto.Id = Id;
             }
-            catch
+            catch (Exception ex)
             {
-
+                ViewData["ErrorMessage"] = ex.Message;
+                ViewData["Prompt"] = "Please contact your manager....";
+                return View("ErrorPage");
             }
 
             if (user.Id == organisationDto.OrganisationOwner)
@@ -84,9 +88,11 @@ namespace TimeKeeper.Ui.Controllers
             {
                 _service.UpdateOrganisation(inputOrganisation);
             }
-            catch
+            catch (Exception ex)
             {
-
+                ViewData["ErrorMessage"] = ex.Message;
+                ViewData["Prompt"] = "Please contact your manager....";
+                return View("ErrorPage");
             }
 
             return RedirectToAction("Index");
