@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Ui", "TimeKeeper
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAB38709-2C81-48DD-82E7-179F91524744}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{515F90E7-3F72-46EB-9CB4-3E2503DD115E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeKeeper.Service_Tests", "TimeKeeper.Service_Tests\TimeKeeper.Service_Tests.csproj", "{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,10 @@ Global
 		{44D6AD23-A352-4BE1-B8BD-33878C9C162A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44D6AD23-A352-4BE1-B8BD-33878C9C162A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44D6AD23-A352-4BE1-B8BD-33878C9C162A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +47,7 @@ Global
 		{4E3E39B1-1AA5-432C-AB95-4DD9F4180BE4} = {BE966856-5016-41A8-80AD-79EA45AC230E}
 		{09964B3E-B880-4DC7-BCD5-9D10D448F3E2} = {BE966856-5016-41A8-80AD-79EA45AC230E}
 		{44D6AD23-A352-4BE1-B8BD-33878C9C162A} = {BE966856-5016-41A8-80AD-79EA45AC230E}
+		{9139E92D-7AF3-48C0-9AF3-866B90FA1DA9} = {515F90E7-3F72-46EB-9CB4-3E2503DD115E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12A350BE-5942-4711-858F-45ADDB7E37BB}
