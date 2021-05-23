@@ -1,12 +1,11 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using TimeKeeper.Data.Models;
 using TimeKeeper.Data.Repositories;
-using TimeKeeper.Service.Dto;
 using TimeKeeper.Service.Services;
-using TimeKeeper.Service_Tests.Fakes;
 using TimeKeeper.Ui;
 using TimeKeeper.Ui.Data;
 
@@ -32,32 +31,13 @@ namespace TimeKeeper.Service_Tests
             .UseInMemoryDatabase(databaseName: "TimeKeeperDbContextFake")
             .Options;
             repo = new TimeKeeperRepo(null, options);
+            PopulateFakeDatabase.PopulateDb(new TimeKeeperDbContext(options));
+
         }
 
         [SetUp]
         public void Setup()
         {
-            using (var context = new TimeKeeperDbContext(options))
-            {
-                ApplicationUser user = new ApplicationUser
-                {
-                    Id = "70658403-ade4-47cf-82a6-034e176290f0",
-                    Email = "user1@email.com",
-                    UserName = "user1@mail.com",
-                };
-
-                Organisation org = new Organisation
-                {
-                    Name = "Electronics Store",
-                    ManagerId = "70658403-ade4-47cf-82a6-034e176290f0",
-
-                };
-
-                context.Add(user);
-                context.Add(org);
-
-                context.SaveChanges();
-            }
         }
 
         [Test]
@@ -65,9 +45,9 @@ namespace TimeKeeper.Service_Tests
         {
             var service = new TimeKeeperService(repo, mapper);
 
-            var organisation = service.GetOrganisation(2);
+            var organisation = service.GetOrganisation(1);
 
-            Assert.AreEqual(organisation.Id, 2);
+            Assert.AreEqual(organisation.Id, 1);
         }
 
         [Test]
@@ -81,5 +61,6 @@ namespace TimeKeeper.Service_Tests
             
             Assert.AreEqual("Electronics Store", theOrg.Name);
         }
+
     }
 }
