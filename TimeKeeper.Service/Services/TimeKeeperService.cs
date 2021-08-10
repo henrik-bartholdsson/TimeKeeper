@@ -22,7 +22,7 @@ namespace TimeKeeper.Service.Services
         void UpdateOrganisation(OrganisationDto orgDto);
         int GetNumberOfOrganisations(string userId);
         void RejectInvitation(int id, string userId);
-        void AcceptInvotation(int id, string userId);
+        void AcceptInvitation(int id, string userId);
         OrganisationDto GetCurrentOrganisation(string userId);
     }
 
@@ -235,7 +235,7 @@ namespace TimeKeeper.Service.Services
             _timeKeeperRepo.UpdateInvitationAsync(invitation);
         }
 
-        public void AcceptInvotation(int id, string userId)
+        public void AcceptInvitation(int id, string userId)
         {
             var invitation = _timeKeeperRepo.GetInvitationAsync(id).Result;
             var user = _timeKeeperRepo.GetApplicationUserAsync(userId).Result;

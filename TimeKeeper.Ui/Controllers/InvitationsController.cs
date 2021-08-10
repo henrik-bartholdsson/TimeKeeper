@@ -35,7 +35,7 @@ namespace TimeKeeper.Ui.Controllers
 
             try
             {
-                _service.AcceptInvotation(id, user.Id);
+                _service.AcceptInvitation(id, user.Id);
             }
             catch (Exception ex)
             {
